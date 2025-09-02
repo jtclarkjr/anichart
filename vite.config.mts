@@ -6,6 +6,9 @@ import VueRouter from 'unplugin-vue-router/vite'
 import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
+  define: {
+    'import.meta.env.ANILIST_API_URL': JSON.stringify(process.env.ANILIST_API_URL)
+  },
   plugins: [
     VueRouter({
       routesFolder: 'src/pages',
@@ -54,20 +57,21 @@ export default defineConfig({
   server: {
     proxy: {
       '/api/graphql': {
-        target: 'https://graphql.anilist.co',
+        target: process.env.ANILIST_API_URL || 'https://graphql.anilist.co',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/graphql/, ''),
-        configure: (proxy, _options) => {
-          proxy.on('error', (err, _req, _res) => {
-            console.log('proxy error', err)
-          })
-          proxy.on('proxyReq', (proxyReq, req, _res) => {
-            console.log('Sending Request to the Target:', req.method, req.url)
-          })
-          proxy.on('proxyRes', (proxyRes, req, _res) => {
-            console.log('Received Response from the Target:', proxyRes.statusCode, req.url)
-          })
-        }
+        // For debugging purposes
+        // configure: (proxy, _options) => {
+        //   proxy.on('error', (err, _req, _res) => {
+        //     console.error('Proxy error:', err)
+        //   })
+        //   proxy.on('proxyReq', (proxyReq, req, _res) => {
+        //     console.log('Proxying request:', req.method, req.url, '-> target')
+        //   })
+        //   proxy.on('proxyRes', (proxyRes, req, _res) => {
+        //     console.log('Proxy response:', proxyRes.statusCode, req.url)
+        //   })
+        // }
       }
     }
   }
