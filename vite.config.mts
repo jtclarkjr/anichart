@@ -57,7 +57,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api/graphql': {
-        target: process.env.ANILIST_API_URL || 'https://graphql.anilist.co',
+        target: process.env.ANILIST_API_URL,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/graphql/, ''),
         // For debugging purposes
