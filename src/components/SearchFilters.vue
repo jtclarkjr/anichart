@@ -150,7 +150,7 @@ const handleSeasonChange = (event: Event) => {
 }
 
 .filter-select {
-  padding: 8px 12px;
+  padding: 8px 32px 8px 12px; /* Add extra right padding for chevron */
   font-size: 0.9rem;
   color: var(--text-color);
   cursor: pointer;
@@ -158,6 +158,11 @@ const handleSeasonChange = (event: Event) => {
   border: 2px solid var(--border-color);
   border-radius: 6px;
   transition: border-color 0.2s ease;
+  appearance: none; /* Remove default styling to control chevron positioning */
+  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23666" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
 
   &:focus {
     outline: none;
