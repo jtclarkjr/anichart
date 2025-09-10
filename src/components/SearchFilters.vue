@@ -2,21 +2,20 @@
   <div class="search-filters">
     <div class="search-section">
       <input
-        :value="searchQuery"
-        @input="handleSearchInput"
+        v-model="searchModel"
         type="text"
         placeholder="Search anime..."
         class="search-input"
       />
     </div>
     <div class="filters">
-      <select :value="selectedSort" @change="handleSortChange" class="filter-select">
+      <select v-model="sortModel" @change="handleFilterChange" class="filter-select">
         <option :value="MediaSort.POPULARITY_DESC">Popular</option>
         <option :value="MediaSort.TRENDING_DESC">Trending</option>
         <option :value="MediaSort.SCORE_DESC">Top Rated</option>
         <option :value="MediaSort.START_DATE_DESC">Recently Released</option>
       </select>
-      <select :value="selectedSeason" @change="handleSeasonChange" class="filter-select">
+      <select v-model="seasonModel" @change="handleFilterChange" class="filter-select">
         <option v-for="season in availableSeasons" :key="season.value" :value="season.value">
           {{ season.label }}
         </option>
@@ -43,8 +42,24 @@ interface Emits {
   filterChange: []
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
+
+// Computed properties for v-model binding
+const seasonModel = computed({
+  get: () => props.selectedSeason,
+  set: (value: MediaSeason | '') => emit('update:selectedSeason', value)
+})
+
+const sortModel = computed({
+  get: () => props.selectedSort,
+  set: (value: MediaSort) => emit('update:selectedSort', value)
+})
+
+const searchModel = computed({
+  get: () => props.searchQuery,
+  set: (value: string) => emit('update:searchQuery', value)
+})
 
 // Available seasons based on current time of year
 const availableSeasons = computed(() => {
@@ -86,21 +101,8 @@ const availableSeasons = computed(() => {
   return seasons
 })
 
-// Event handlers
-const handleSearchInput = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  emit('update:searchQuery', target.value)
-}
-
-const handleSortChange = (event: Event) => {
-  const target = event.target as HTMLSelectElement
-  emit('update:selectedSort', target.value as MediaSort)
-  emit('filterChange')
-}
-
-const handleSeasonChange = (event: Event) => {
-  const target = event.target as HTMLSelectElement
-  emit('update:selectedSeason', target.value as MediaSeason | '')
+// Event handler for filter changes
+const handleFilterChange = () => {
   emit('filterChange')
 }
 </script>
