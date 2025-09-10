@@ -12,6 +12,7 @@ export const GET_ANIME_LIST = gql`
     $seasonYear: Int
     $format: MediaFormat
     $status: MediaStatus
+    $isAdult: Boolean
   ) {
     Page(page: $page, perPage: $perPage) {
       pageInfo {
@@ -30,6 +31,7 @@ export const GET_ANIME_LIST = gql`
         seasonYear: $seasonYear
         format: $format
         status: $status
+        isAdult: $isAdult
       ) {
         id
         title {
@@ -131,7 +133,7 @@ export const GET_ANIME_DETAILS = gql`
 
 // Query for searching anime
 export const SEARCH_ANIME = gql`
-  query SearchAnime($search: String!, $page: Int = 1, $perPage: Int = 20) {
+  query SearchAnime($search: String!, $page: Int = 1, $perPage: Int = 20, $isAdult: Boolean = false) {
     Page(page: $page, perPage: $perPage) {
       pageInfo {
         total
@@ -140,7 +142,7 @@ export const SEARCH_ANIME = gql`
         hasNextPage
         perPage
       }
-      media(type: ANIME, search: $search, sort: [SEARCH_MATCH, POPULARITY_DESC]) {
+      media(type: ANIME, search: $search, sort: [SEARCH_MATCH, POPULARITY_DESC], isAdult: $isAdult) {
         id
         title {
           romaji
@@ -173,7 +175,7 @@ export const SEARCH_ANIME = gql`
 
 // Query for getting trending anime
 export const GET_TRENDING_ANIME = gql`
-  query GetTrendingAnime($page: Int = 1, $perPage: Int = 20) {
+  query GetTrendingAnime($page: Int = 1, $perPage: Int = 20, $isAdult: Boolean = false) {
     Page(page: $page, perPage: $perPage) {
       pageInfo {
         total
@@ -182,7 +184,7 @@ export const GET_TRENDING_ANIME = gql`
         hasNextPage
         perPage
       }
-      media(type: ANIME, sort: [TRENDING_DESC, POPULARITY_DESC]) {
+      media(type: ANIME, sort: [TRENDING_DESC, POPULARITY_DESC], isAdult: $isAdult) {
         id
         title {
           romaji
@@ -221,6 +223,7 @@ export const GET_SEASONAL_ANIME = gql`
     $seasonYear: Int!
     $page: Int = 1
     $perPage: Int = 20
+    $isAdult: Boolean = false
   ) {
     Page(page: $page, perPage: $perPage) {
       pageInfo {
@@ -230,7 +233,7 @@ export const GET_SEASONAL_ANIME = gql`
         hasNextPage
         perPage
       }
-      media(type: ANIME, season: $season, seasonYear: $seasonYear, sort: [POPULARITY_DESC]) {
+      media(type: ANIME, season: $season, seasonYear: $seasonYear, sort: [POPULARITY_DESC], isAdult: $isAdult) {
         id
         title {
           romaji

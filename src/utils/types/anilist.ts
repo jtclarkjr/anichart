@@ -176,6 +176,8 @@ export interface AnimeListParams {
   seasonYear?: number
   format?: MediaFormat
   status?: MediaStatus
+  // Request only non-adult content from the API when possible
+  isAdult?: boolean
 }
 
 export interface AnimeListResponse {

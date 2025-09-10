@@ -69,12 +69,24 @@ export const useAnimeStore = defineStore('anime', {
   },
 
   actions: {
+    // Helper: filter out adult content or explicit tags
+    filterSafeAnime(list: Media[] = []): Media[] {
+      const banned = new Set(['adult', 'hentai'])
+      return list.filter((m) => {
+        if (m.isAdult) return false
+        // Case-insensitive check in genres
+        const genres = (m.genres || []).map((g) => g.toLowerCase())
+        return !genres.some((g) => banned.has(g))
+      })
+    },
+
     // Generate API parameters from current state
     getApiParams(): AnimeListParams {
       const params: AnimeListParams = {
         page: this.currentPage,
         perPage: this.itemsPerPage,
-        sort: [this.selectedSort]
+        sort: [this.selectedSort],
+        isAdult: false
       }
 
       // Add search if present
@@ -165,7 +177,7 @@ export const useAnimeStore = defineStore('anime', {
 
               if (fallbackResult.media && fallbackResult.media.length > 0) {
                 console.log(`Found results in ${fallbackSeason} season`)
-                this.currentAnime = fallbackResult.media
+                this.currentAnime = this.filterSafeAnime(fallbackResult.media)
                 this.totalAvailable = fallbackResult.pageInfo?.total || 0
                 this.hasNextPage = fallbackResult.pageInfo?.hasNextPage || false
 
@@ -186,10 +198,12 @@ export const useAnimeStore = defineStore('anime', {
             const noSeasonParams = { ...this.getApiParams() }
             delete noSeasonParams.season
             delete noSeasonParams.seasonYear
+            // Ensure adult filter is maintained
+            noSeasonParams.isAdult = false
             const noSeasonResult = await getAnimeList(noSeasonParams)
 
             if (noSeasonResult.media && noSeasonResult.media.length > 0) {
-              this.currentAnime = noSeasonResult.media
+              this.currentAnime = this.filterSafeAnime(noSeasonResult.media)
               this.totalAvailable = noSeasonResult.pageInfo?.total || 0
               this.hasNextPage = noSeasonResult.pageInfo?.hasNextPage || false
 
@@ -207,7 +221,8 @@ export const useAnimeStore = defineStore('anime', {
           }
         }
 
-        const newAnime = resetData ? result.media : [...previousAnime, ...result.media]
+        const filteredResult = this.filterSafeAnime(result.media)
+        const newAnime = resetData ? filteredResult : [...previousAnime, ...filteredResult]
 
         this.currentAnime = newAnime
         this.totalAvailable = result.pageInfo?.total || 0

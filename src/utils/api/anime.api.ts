@@ -97,7 +97,7 @@ export const searchAnime = async (
 ): Promise<Page> => {
   const data = await executeQuery<AnimeListResponse>(
     SEARCH_ANIME,
-    { search, page, perPage },
+    { search, page, perPage, isAdult: false },
     'Failed to search anime'
   )
   return extractPageData(data)
@@ -109,7 +109,7 @@ export const searchAnime = async (
 export const getTrendingAnime = async (page: number = 1, perPage: number = 20): Promise<Page> => {
   const data = await executeQuery<AnimeListResponse>(
     GET_TRENDING_ANIME,
-    { page, perPage },
+    { page, perPage, isAdult: false },
     'Failed to fetch trending anime'
   )
   return extractPageData(data)
@@ -126,7 +126,7 @@ export const getSeasonalAnime = async (
 ): Promise<Page> => {
   const data = await executeQuery<AnimeListResponse>(
     GET_SEASONAL_ANIME,
-    { season, seasonYear, page, perPage },
+    { season, seasonYear, page, perPage, isAdult: false },
     'Failed to fetch seasonal anime'
   )
   return extractPageData(data)
