@@ -72,6 +72,10 @@ Bun.serve({
           '<!--pinia-state-->',
           `<script>window.__PINIA_STATE__=${JSON.stringify(state)}</script>`
         )
+        .replace(
+          '<!--env-vars-->',
+          `<script>window.__ENV__ = ${JSON.stringify({ ANILIST_API_URL: process.env.ANILIST_API_URL })}</script>`
+        )
 
       return new Response(responseHtml, {
         headers: {

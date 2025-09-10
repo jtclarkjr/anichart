@@ -26,5 +26,6 @@ pages.isReady().then(() => {
 declare global {
   interface Window {
     __PINIA_STATE__: Record<string, unknown>
+    __ENV__: { ANILIST_API_URL: string }
   }
 }
