@@ -1,0 +1,5 @@
+$ PORT=5174 bun run server.js
+SSR server running at http://localhost:5174 (powered by Bun)
+Run 'bun run dev' in another terminal for HMR and asset serving
+Using GraphQL URI: /api/graphql
+error: script "dev:ssr:simple" was terminated by signal SIGTERM (Polite quit request)
