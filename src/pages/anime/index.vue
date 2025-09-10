@@ -81,10 +81,20 @@ const handleSearch = debounce(() => {
 // Reference to the AnimeGrid component
 const animeGridRef = ref()
 let observer: IntersectionObserver | null = null
+let scrollListener: ((event: Event) => void) | null = null
 
 const setupShowMore = () => {
+  // Clean up any existing observer first
+  cleanupObserver()
+  
   const loadTrigger = animeGridRef.value?.loadTrigger
-  if (!loadTrigger) return
+  if (!loadTrigger) {
+    // If loadTrigger is not available yet, try again after a short delay
+    setTimeout(() => {
+      setupShowMore()
+    }, 100)
+    return
+  }
 
   observer = new IntersectionObserver(
     (entries) => {
@@ -106,12 +116,45 @@ const setupShowMore = () => {
   )
 
   observer.observe(loadTrigger)
+  
+  // Add a fallback scroll listener in case intersection observer has issues
+  setupScrollFallback()
+}
+
+const setupScrollFallback = () => {
+  if (scrollListener) {
+    window.removeEventListener('scroll', scrollListener)
+  }
+  
+  scrollListener = () => {
+    const scrollHeight = document.documentElement.scrollHeight
+    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
+    const clientHeight = document.documentElement.clientHeight
+    
+    // Trigger load more when within 200px of bottom
+    if (scrollTop + clientHeight >= scrollHeight - 200) {
+      if (
+        animeStore.hasMoreToShow &&
+        !animeStore.loading &&
+        !animeStore.loadingMore
+      ) {
+        animeStore.loadMoreData()
+      }
+    }
+  }
+  
+  window.addEventListener('scroll', scrollListener, { passive: true })
 }
 
 const cleanupObserver = () => {
   if (observer) {
     observer.disconnect()
     observer = null
+  }
+  
+  if (scrollListener) {
+    window.removeEventListener('scroll', scrollListener)
+    scrollListener = null
   }
 }
 
@@ -130,10 +173,11 @@ onMounted(async () => {
     await animeStore.loadInitialData()
   }
 
-  // Setup show more after data is loaded
-  nextTick(() => {
-    setupShowMore()
-  })
+  // Setup show more after data is loaded and DOM is ready
+  // Use multiple nextTick calls to ensure the AnimeGrid component is fully rendered
+  await nextTick()
+  await nextTick()
+  setupShowMore()
 })
 
 // Clear cache on navigation to ensure fresh data
