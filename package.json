@@ -17,9 +17,7 @@
     "preview:ssr": "bun run build:ssr && bun run start",
     "build": "run-s pre-build build-only",
     "test:unit": "vitest run --environment jsdom --root src/",
-    "lint": "run-p lint:es lint:style",
-    "lint:es": "eslint ./src",
-    "lint:style": "stylelint ./src --fix",
+    "lint": "eslint ./src",
     "prettier:fix": "prettier --write ."
   },
   "dependencies": {
