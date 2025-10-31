@@ -73,7 +73,7 @@ server-prod.ts          # Production SSR server
 
 ### Prerequisites
 
-- **Bun** (v1.0 or higher) - [Install Bun](https://bun.sh/)
+- **Bun** (v1.3 or higher) - [Install Bun](https://bun.sh/)
 - Node.js (v18 or higher) for Vite compatibility
 
 ### Installation
