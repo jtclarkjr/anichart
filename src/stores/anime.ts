@@ -99,12 +99,20 @@ export const useAnimeStore = defineStore('anime', {
         params.season = this.selectedSeason
         // For seasonal anime, calculate the correct year
         const { season: currentSeason, year } = getCurrentSeason()
-        // Winter season belongs to the next calendar year only if we're currently in Fall
-        // (or later months that would make Winter refer to next year's Winter)
-        params.seasonYear =
-          this.selectedSeason === MediaSeason.WINTER && currentSeason === MediaSeason.FALL
-            ? year + 1
-            : year
+        // Season year logic:
+        // - If currently Winter and selecting Summer/Fall: use previous year (Winter 2026 -> Summer 2025)
+        // - If currently Fall and selecting Winter: use next year (Fall 2025 -> Winter 2026)
+        // - Otherwise: use current year
+        if (
+          currentSeason === MediaSeason.WINTER &&
+          (this.selectedSeason === MediaSeason.SUMMER || this.selectedSeason === MediaSeason.FALL)
+        ) {
+          params.seasonYear = year - 1
+        } else if (this.selectedSeason === MediaSeason.WINTER && currentSeason === MediaSeason.FALL) {
+          params.seasonYear = year + 1
+        } else {
+          params.seasonYear = year
+        }
       }
 
       return params
@@ -165,10 +173,20 @@ export const useAnimeStore = defineStore('anime', {
 
             // Try previous seasons
             for (const fallbackSeason of fallbackSeasons) {
-              const seasonYear =
-                fallbackSeason === MediaSeason.WINTER && currentSeason !== MediaSeason.WINTER
-                  ? year + 1
-                  : year
+              // Season year logic:
+              // - If currently Winter and fallback is Summer/Fall: use previous year
+              // - If currently Fall and fallback is Winter: use next year
+              // - Otherwise: use current year
+              let seasonYear = year
+              if (
+                currentSeason === MediaSeason.WINTER &&
+                (fallbackSeason === MediaSeason.SUMMER || fallbackSeason === MediaSeason.FALL)
+              ) {
+                seasonYear = year - 1
+              } else if (fallbackSeason === MediaSeason.WINTER && currentSeason === MediaSeason.FALL) {
+                seasonYear = year + 1
+              }
+
               const fallbackResult = await getAnimeList({
                 ...this.getApiParams(),
                 season: fallbackSeason,

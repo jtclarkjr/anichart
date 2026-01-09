@@ -73,25 +73,37 @@ const availableSeasons = computed(() => {
     FALL: 'Fall'
   } as const
 
-  // Always show current year's Spring, Summer, Fall
-  const currentYearSeasons = ['SPRING', 'SUMMER', 'FALL'] as const
-  for (const seasonKey of currentYearSeasons) {
-    seasons.push({
-      value: seasonKey,
-      label: `${seasonNames[seasonKey]} ${year}`
-    })
-  }
+  // Season year logic based on current season:
+  // - If Winter: Spring is upcoming (current year), Summer/Fall are previous year
+  // - If Spring: Summer/Fall are current year, Winter is current year
+  // - If Summer: Fall is current year, Spring was current year, Winter is current year
+  // - If Fall: Spring/Summer were current year, Winter is next year
 
-  // For Winter, show next year's Winter only if we're currently in Fall or later
-  // Otherwise, Winter refers to the current year's Winter
+  // Spring
+  seasons.push({
+    value: 'SPRING',
+    label: `${seasonNames.SPRING} ${currentSeason === 'WINTER' ? year : year - 1}`
+  })
+
+  // Summer
+  seasons.push({
+    value: 'SUMMER',
+    label: `${seasonNames.SUMMER} ${currentSeason === 'WINTER' ? year - 1 : year}`
+  })
+
+  // Fall
+  seasons.push({
+    value: 'FALL',
+    label: `${seasonNames.FALL} ${currentSeason === 'WINTER' ? year - 1 : year}`
+  })
+
+  // Winter
   if (currentSeason === 'FALL') {
-    // Show upcoming Winter (next year)
     seasons.push({
       value: 'WINTER',
       label: `${seasonNames.WINTER} ${year + 1}`
     })
   } else {
-    // Show current year's Winter (current or past)
     seasons.push({
       value: 'WINTER',
       label: `${seasonNames.WINTER} ${year}`
