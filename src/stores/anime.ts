@@ -108,7 +108,10 @@ export const useAnimeStore = defineStore('anime', {
           (this.selectedSeason === MediaSeason.SUMMER || this.selectedSeason === MediaSeason.FALL)
         ) {
           params.seasonYear = year - 1
-        } else if (this.selectedSeason === MediaSeason.WINTER && currentSeason === MediaSeason.FALL) {
+        } else if (
+          this.selectedSeason === MediaSeason.WINTER &&
+          currentSeason === MediaSeason.FALL
+        ) {
           params.seasonYear = year + 1
         } else {
           params.seasonYear = year
@@ -183,7 +186,10 @@ export const useAnimeStore = defineStore('anime', {
                 (fallbackSeason === MediaSeason.SUMMER || fallbackSeason === MediaSeason.FALL)
               ) {
                 seasonYear = year - 1
-              } else if (fallbackSeason === MediaSeason.WINTER && currentSeason === MediaSeason.FALL) {
+              } else if (
+                fallbackSeason === MediaSeason.WINTER &&
+                currentSeason === MediaSeason.FALL
+              ) {
                 seasonYear = year + 1
               }
 

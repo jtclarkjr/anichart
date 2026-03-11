@@ -1,12 +1,7 @@
 <template>
   <div class="search-filters">
     <div class="search-section">
-      <input
-        v-model="searchModel"
-        type="text"
-        placeholder="Search anime..."
-        class="search-input"
-      />
+      <input v-model="searchModel" type="text" placeholder="Search anime..." class="search-input" />
     </div>
     <div class="filters">
       <select v-model="sortModel" @change="handleFilterChange" class="filter-select">

@@ -86,7 +86,7 @@ let scrollListener: ((event: Event) => void) | null = null
 const setupShowMore = () => {
   // Clean up any existing observer first
   cleanupObserver()
-  
+
   const loadTrigger = animeGridRef.value?.loadTrigger
   if (!loadTrigger) {
     // If loadTrigger is not available yet, try again after a short delay
@@ -116,7 +116,7 @@ const setupShowMore = () => {
   )
 
   observer.observe(loadTrigger)
-  
+
   // Add a fallback scroll listener in case intersection observer has issues
   setupScrollFallback()
 }
@@ -125,24 +125,20 @@ const setupScrollFallback = () => {
   if (scrollListener) {
     window.removeEventListener('scroll', scrollListener)
   }
-  
+
   scrollListener = () => {
     const scrollHeight = document.documentElement.scrollHeight
     const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
     const clientHeight = document.documentElement.clientHeight
-    
+
     // Trigger load more when within 200px of bottom
     if (scrollTop + clientHeight >= scrollHeight - 200) {
-      if (
-        animeStore.hasMoreToShow &&
-        !animeStore.loading &&
-        !animeStore.loadingMore
-      ) {
+      if (animeStore.hasMoreToShow && !animeStore.loading && !animeStore.loadingMore) {
         animeStore.loadMoreData()
       }
     }
   }
-  
+
   window.addEventListener('scroll', scrollListener, { passive: true })
 }
 
@@ -151,7 +147,7 @@ const cleanupObserver = () => {
     observer.disconnect()
     observer = null
   }
-  
+
   if (scrollListener) {
     window.removeEventListener('scroll', scrollListener)
     scrollListener = null
