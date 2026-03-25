@@ -1,0 +1,27 @@
+{
+  "plugins": ["vue", "typescript", "unicorn"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
+  "rules": {
+    "no-unused-vars": "off",
+    "typescript/no-unused-vars": "error",
+    "typescript/no-explicit-any": "error"
+  },
+  "ignorePatterns": [
+    "dist",
+    "dist-ssr",
+    "coverage",
+    "node_modules",
+    "auto-imports.d.ts",
+    "components.d.ts",
+    "typed-router.d.ts",
+    "src/auto-imports.d.ts",
+    "src/components.d.ts"
+  ],
+  "options": {
+    "typeAware": true,
+    "typeCheck": true
+  }
+}

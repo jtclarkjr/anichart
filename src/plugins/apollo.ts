@@ -1,6 +1,12 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client/core'
 import { HttpLink } from '@apollo/client/link/http'
 
+type RuntimeProcess = typeof globalThis & {
+  process?: {
+    env?: Record<string, string | undefined>
+  }
+}
+
 // Determine the GraphQL endpoint based on environment
 const getGraphQLUri = (): string => {
   // In production (or server-side), use the direct AniList URL
@@ -8,7 +14,7 @@ const getGraphQLUri = (): string => {
   // For build-time access (like in development), use import.meta.env
   // For client-side in production SSR, use window.__ENV__ passed from server
   const apiUrl =
-    (typeof process !== 'undefined' ? process.env.ANILIST_API_URL : undefined) ||
+    (globalThis as RuntimeProcess).process?.env?.ANILIST_API_URL ||
     import.meta.env.ANILIST_API_URL ||
     (typeof window !== 'undefined' && window.__ENV__ ? window.__ENV__.ANILIST_API_URL : undefined)
 

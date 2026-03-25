@@ -1,4 +1,5 @@
-import { createServer, ViteDevServer } from 'vite'
+import { createServer, type ViteDevServer } from 'vite-plus'
+import type { SSRRenderModule } from './src/types/ssr'
 
 // Load environment variables
 const ANILIST_API_URL = process.env.ANILIST_API_URL || 'https://graphql.anilist.co'
@@ -21,7 +22,7 @@ const waitForVite = async () => {
         console.log(`Vite dev server running at http://localhost:${DEV_PORT}`)
         return
       }
-    } catch (error) {
+    } catch {
       // Vite not ready yet
     }
     await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -138,10 +139,7 @@ Bun.serve({
       )
 
       // Load server module and render
-      const {
-        render
-      }: { render: (url: string) => Promise<{ html: string; state: Record<string, unknown> }> } =
-        await ssrVite.ssrLoadModule('/src/entry-server.ts')
+      const { render } = (await ssrVite.ssrLoadModule('/src/entry-server.ts')) as SSRRenderModule
       const { html, state } = await render(pathname)
 
       // Replace SSR placeholders

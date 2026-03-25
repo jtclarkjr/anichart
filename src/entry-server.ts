@@ -1,16 +1,13 @@
-import { createSSRApp } from 'vue'
+import { createSSRApp, type Plugin } from 'vue'
 import { createPinia } from 'pinia'
 import { renderToString } from 'vue/server-renderer'
 import App from './App.vue'
 import pages from '@/pages'
-import type { SSRRenderResult } from '@/types/ssr'
+import type { AppSSRContext, SSRRenderResult } from '@/types/ssr'
 // Import styles for SSR
 import '@/assets/styles/anime.scss'
 
-export async function render(
-  url: string,
-  renderContext?: Record<string, unknown>
-): Promise<SSRRenderResult> {
+export async function render(url: string, renderContext?: AppSSRContext): Promise<SSRRenderResult> {
   // Create the app instance
   const app = createSSRApp(App)
 
@@ -19,14 +16,14 @@ export async function render(
 
   // Install plugins
   app.use(pages)
-  app.use(pinia)
+  app.use(pinia as unknown as Plugin)
 
   // Set the current location for router
   await pages.push(url)
   await pages.isReady()
 
   // Create render context to collect CSS
-  const ctx = renderContext || {}
+  const ctx: AppSSRContext = renderContext ?? {}
 
   // Render the app to HTML string
   const html = await renderToString(app, ctx)

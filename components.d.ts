@@ -27,14 +27,14 @@ declare module 'vue' {
 
 // For TSX support
 declare global {
-  const AnimeBanner: (typeof import('./src/components/AnimeBanner.vue'))['default']
-  const AnimeCard: (typeof import('./src/components/AnimeCard.vue'))['default']
-  const AnimeDescription: (typeof import('./src/components/AnimeDescription.vue'))['default']
-  const AnimeGrid: (typeof import('./src/components/AnimeGrid.vue'))['default']
-  const AnimeMetadata: (typeof import('./src/components/AnimeMetadata.vue'))['default']
-  const ClientOnly: (typeof import('./src/components/ClientOnly.vue'))['default']
-  const RouterLink: (typeof import('vue-router'))['RouterLink']
-  const RouterView: (typeof import('vue-router'))['RouterView']
-  const RouteTransition: (typeof import('./src/components/RouteTransition.vue'))['default']
-  const SearchFilters: (typeof import('./src/components/SearchFilters.vue'))['default']
+  const AnimeBanner: typeof import('./src/components/AnimeBanner.vue')['default']
+  const AnimeCard: typeof import('./src/components/AnimeCard.vue')['default']
+  const AnimeDescription: typeof import('./src/components/AnimeDescription.vue')['default']
+  const AnimeGrid: typeof import('./src/components/AnimeGrid.vue')['default']
+  const AnimeMetadata: typeof import('./src/components/AnimeMetadata.vue')['default']
+  const ClientOnly: typeof import('./src/components/ClientOnly.vue')['default']
+  const RouterLink: typeof import('vue-router')['RouterLink']
+  const RouterView: typeof import('vue-router')['RouterView']
+  const RouteTransition: typeof import('./src/components/RouteTransition.vue')['default']
+  const SearchFilters: typeof import('./src/components/SearchFilters.vue')['default']
 }

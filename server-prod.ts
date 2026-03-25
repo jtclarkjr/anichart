@@ -1,14 +1,13 @@
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import type { SSRRenderModule } from './src/types/ssr'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const port = process.env.PORT || 8080
 
 // Import the built server bundle
-const {
-  render
-}: { render: (url: string) => Promise<{ html: string; state: Record<string, unknown> }> } =
-  await import('./dist/server/entry-server.js')
+const serverEntryUrl = new URL('./dist/server/entry-server.js', import.meta.url)
+const { render } = (await import(serverEntryUrl.href)) as SSRRenderModule
 
 // Read the built client HTML template
 const template = await Bun.file(join(__dirname, 'dist/client/index.html')).text()

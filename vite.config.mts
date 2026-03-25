@@ -1,23 +1,17 @@
 import { fileURLToPath, URL } from 'node:url'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
-import { defineConfig, loadEnv } from 'vite'
+import { defineConfig, loadEnv } from 'vite-plus'
 import VueRouter from 'unplugin-vue-router/vite'
 import vue from '@vitejs/plugin-vue'
 
-export default defineConfig(({ mode, command, ssrBuild }) => {
-  const env = loadEnv(mode, process.cwd(), '')
-  const API_URL = env.ANILIST_API_URL
-
-  if (!API_URL) {
-    console.warn(
-      'ANILIST_API_URL is not set in your environment (.env). Vite proxy will not work without it.'
-    )
-  }
-
-  return {
+export const createAppConfig = (apiUrl: string | undefined, isSsrBuild = false) =>
+  defineConfig({
+    staged: {
+      '*': 'vp check --fix'
+    },
     define: {
-      'import.meta.env.ANILIST_API_URL': JSON.stringify(API_URL)
+      'import.meta.env.ANILIST_API_URL': JSON.stringify(apiUrl ?? '')
     },
     css: {
       preprocessorOptions: {
@@ -25,19 +19,17 @@ export default defineConfig(({ mode, command, ssrBuild }) => {
       }
     },
     build: {
-      cssCodeSplit: !ssrBuild,
-      rollupOptions: ssrBuild
+      cssCodeSplit: !isSsrBuild,
+      rollupOptions: isSsrBuild
         ? {
             input: {
               server: 'src/entry-server.ts'
             },
             output: {
-              format: 'esm'
+              format: 'esm' as const
             }
           }
         : {
-            // For client build, use default index.html as entry point
-            // This ensures index.html is processed and copied to dist
             input: 'index.html'
           }
     },
@@ -51,7 +43,9 @@ export default defineConfig(({ mode, command, ssrBuild }) => {
         exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**']
       }),
       vue(),
-      Components(),
+      Components({
+        dts: './components.d.ts'
+      }),
       AutoImport({
         include: [/\.[tj]sx?$/, /\.vue$/, /\.vue\?vue/, /\.md$/],
         imports: [
@@ -72,14 +66,9 @@ export default defineConfig(({ mode, command, ssrBuild }) => {
         ],
         defaultExportByFilename: false,
         dirs: ['src/utils/helpers/index.ts', 'src/utils/api/index.ts', 'src/stores/index.ts'],
-        dts: true,
+        dts: './auto-imports.d.ts',
         vueTemplate: false,
-        resolvers: [],
-        eslintrc: {
-          enabled: true,
-          filepath: './.eslintrc-auto-import.json',
-          globalsPropValue: true
-        }
+        resolvers: []
       })
     ],
     resolve: {
@@ -87,25 +76,28 @@ export default defineConfig(({ mode, command, ssrBuild }) => {
         '@': fileURLToPath(new URL('./src', import.meta.url))
       }
     },
-    server: {
-      proxy: {
-        '/api/graphql': {
-          target: API_URL,
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api\/graphql/, '')
-          // configure: (proxy, _options) => {
-          //   proxy.on('error', (err, _req, _res) => {
-          //     console.error('Proxy error:', err)
-          //   })
-          //   proxy.on('proxyReq', (proxyReq, req, _res) => {
-          //     console.log('Proxying request:', req.method, req.url, '->', API_URL)
-          //   })
-          //   proxy.on('proxyRes', (proxyRes, req, _res) => {
-          //     console.log('Proxy response:', proxyRes.statusCode, req.url)
-          //   })
-          // }
+    server: apiUrl
+      ? {
+          proxy: {
+            '/api/graphql': {
+              target: apiUrl,
+              changeOrigin: true,
+              rewrite: (path: string) => path.replace(/^\/api\/graphql/, '')
+            }
+          }
         }
-      }
-    }
+      : undefined
+  })
+
+export default defineConfig(({ mode, isSsrBuild }) => {
+  const env = loadEnv(mode, process.cwd(), '')
+  const apiUrl = env.ANILIST_API_URL
+
+  if (!apiUrl) {
+    console.warn(
+      'ANILIST_API_URL is not set in your environment (.env). Vite proxy will not work without it.'
+    )
   }
+
+  return createAppConfig(apiUrl, isSsrBuild)
 })

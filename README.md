@@ -1,6 +1,7 @@
 # AniChart
 
-A modern Vue.js application for browsing anime data using the AniList GraphQL API. Built with TypeScript, Vue 3 Composition API, Apollo Client, and full Server-Side Rendering (SSR) support.
+A modern Vue.js application for browsing anime data using the AniList GraphQL API. Built with
+TypeScript, Vue 3 Composition API, Apollo Client, and full Server-Side Rendering (SSR) support.
 
 ## Features
 
@@ -8,7 +9,7 @@ A modern Vue.js application for browsing anime data using the AniList GraphQL AP
 - **Trending Anime**: View currently trending anime series
 - **Detailed View**: Get comprehensive information about specific anime
 - **Responsive Design**: Modern UI with SCSS styling
-- **Fast Performance**: Built with Vite for optimal development and build performance
+- **Fast Performance**: Built with Vite+ tooling for fast development and build performance
 - **Server-Side Rendering**: Full SSR support with data prefetching for better SEO and performance
 - **Mobile Friendly**: Responsive design that works on all devices
 - **Hot Module Replacement**: Full HMR support even in SSR development mode
@@ -17,15 +18,17 @@ A modern Vue.js application for browsing anime data using the AniList GraphQL AP
 
 - **Frontend Framework**: Vue 3 with Composition API
 - **Language**: TypeScript
-- **Runtime**: Bun (development and production servers)
+- **Runtime**: Bun (SSR development and production servers)
 - **State Management**: Pinia with SSR state hydration
 - **Routing**: Vue Router with auto-generated typed routes
 - **GraphQL Client**: Apollo Client with SSR support
-- **Build Tool**: Vite with SSR bundling
+- **Build Tool**: Vite+ (`vp`) with SSR bundling
 - **Styling**: SCSS
 - **Server-Side Rendering**: Custom Bun-powered SSR with data prefetching
-- **Testing**: Vitest with jsdom
-- **Linting**: ESLint with Prettier integration
+- **Testing**: Vite+ test runner with jsdom
+- **Linting**: Oxlint via `vp lint`
+- **Formatting**: Oxfmt via `vp fmt`
+- **Type Checking**: `@typescript/native-preview` via `tsgo`
 - **Auto Import**: Unplugin Auto Import for Vue composition functions
 
 ## Project Structure
@@ -74,7 +77,6 @@ server-prod.ts          # Production SSR server
 ### Prerequisites
 
 - **Bun** (v1.3 or higher) - [Install Bun](https://bun.sh/)
-- Node.js (v18 or higher) for Vite compatibility
 
 ### Installation
 
@@ -112,10 +114,10 @@ bun run dev:ssr
 
 ### SPA Development
 
-Run the standard Vite development server for client-side only:
+Run the client-only Vite+ development server:
 
 ```bash
-bun run dev
+vp dev
 ```
 
 - **URL**: `http://localhost:5173`
@@ -126,7 +128,8 @@ bun run dev
 
 ### Project Architecture
 
-This is a **Universal Vue 3 application** that supports both Server-Side Rendering (SSR) and Single-Page Application (SPA) modes.
+This is a **Universal Vue 3 application** that supports both Server-Side Rendering (SSR) and
+Single-Page Application (SPA) modes.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -135,7 +138,7 @@ This is a **Universal Vue 3 application** that supports both Server-Side Renderi
 │   Development   │    Production     │   Client Only       │
 │                 │                   │                     │
 │ ┌─────────────┐ │ ┌───────────────┐ │ ┌─────────────────┐ │
-│ │Unified Dev  │ │ │Production SSR │ │ │Vite Dev Server  │ │
+│ │Unified Dev  │ │ │Production SSR │ │ │Vite+ Dev Server │ │
 │ │Server       │ │ │Server         │ │ │(SPA Mode)       │ │
 │ │:5174        │ │ │:8080          │ │ │:5173            │ │
 │ │             │ │ │               │ │ │                 │ │
@@ -156,7 +159,7 @@ This is a **Universal Vue 3 application** that supports both Server-Side Renderi
   - Binds to `0.0.0.0:8080` for external access
 - **`dev-unified.ts`** - Development server with SSR + HMR
   - Proxy setup for seamless development experience
-  - Combines Vite dev server with SSR server
+  - Combines the `vp dev` server with the Bun SSR server
 - **`server.ts`** - Simple SSR development server
   - Basic SSR without HMR integration
 
@@ -171,7 +174,7 @@ This is a **Universal Vue 3 application** that supports both Server-Side Renderi
 
 #### Configuration Files
 
-- **`vite.config.mts`** - Vite configuration with SSR support
+- **`vite.config.mts`** - Vite+ configuration with SSR support
   - Defines build-time environment variables
   - Configures separate client/server builds
   - Sets up development proxy for GraphQL
@@ -192,17 +195,18 @@ This is a **Universal Vue 3 application** that supports both Server-Side Renderi
 
 ### How SSR Works
 
-This application uses a **hybrid rendering approach** that supports both client-side (SPA) and server-side rendering (SSR):
+This application uses a **hybrid rendering approach** that supports both client-side (SPA) and
+server-side rendering (SSR):
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Development   │    │   Production    │    │   Client Side   │
 │                 │    │                 │    │                 │
-│  Unified Server │    │  Production     │    │  Vite Dev       │
+│  Unified Server │    │  Production     │    │  Vite+ Dev      │
 │  (dev-unified)  │    │  SSR Server     │    │  Server (SPA)   │
 │                 │    │  (server-prod)  │    │                 │
 │ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │
-│ │Vite Dev     │ │    │ │Static Assets│ │    │ │Hot Reload   │ │
+│ │Vite+ Dev    │ │    │ │Static Assets│ │    │ │Hot Reload   │ │
 │ │Server       │ │    │ │Serving      │ │    │ │Client Routes│ │
 │ │:5173        │ │    │ │             │ │    │ │:5173        │ │
 │ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │
@@ -243,40 +247,46 @@ This application uses a **hybrid rendering approach** that supports both client-
 
 ### Development Commands
 
-- **`bun run dev:ssr`** - **Unified SSR development** (recommended)
-  - Starts both Vite dev server and SSR server
+- **`vp dev:ssr`** - **Unified SSR development** (recommended)
+  - Starts the Bun SSR server and the `vp dev` asset server together
   - Full HMR, asset serving, and server-side rendering
   - Visit `http://localhost:5174`
 
-- **`bun run dev`** - **SPA development**
-  - Standard Vite dev server with client-side routing
+- **`vp dev`** - **SPA development**
+  - Runs `vp dev` for client-only development
   - Visit `http://localhost:5173`
 
-- **`bun run dev:ssr:simple`** - 🔨 **Simple SSR** (requires separate asset server)
-  - SSR server only, requires running `bun dev` separately
+- **`vp dev:ssr:simple`** - 🔨 **Simple SSR** (requires separate asset server)
+  - SSR server only, requires running `bun run dev` separately
   - Visit `http://localhost:5174`
 
 ### Production Commands
+
+- **`bun run build`** - **Full SSR build with checks**
+  - Runs tests, lint, format checks, native-preview typechecks, and SSR builds
 
 - **`bun run build:ssr`** - **Build for SSR production**
   - Builds both client bundle and SSR server bundle
   - Outputs to `dist/client/` and `dist/server/`
 
+- **`bun run build:client`** - Build the client bundle only
+- **`bun run build:server`** - Build the SSR entry bundle only
+
 - **`bun run start`** - **Production SSR server**
   - Serves static assets and handles SSR
   - Visit `http://localhost:3000`
 
-- **`bun run build`** - **Build SPA** (includes pre-build checks)
-- **`bun run build-only`** - Build SPA without checks
+- **`bun run preview:ssr`** - Build SSR bundles and start the Bun production server
+- **`bun run build-only`** - Build the client bundle without running checks
 
 ### Quality Commands
 
-- **`bun run test:unit`** - Run unit tests with Vitest
-- **`bun run lint`** - Run ESLint and Stylelint
-- **`bun run lint:es`** - Run ESLint only
-- **`bun run lint:style`** - Run Stylelint with auto-fix
-- **`bun run prettier:fix`** - Format code with Prettier
-- **`bun run pre-build`** - Run all quality checks (tests, linting, formatting)
+- **`vp test:unit`** - Run unit tests with the Vite+ test runner
+- **`vp lint`** - Run oxlint
+- **`vp fmt`** - Format the repo with oxfmt
+- **`vp fmt:check`** - Verify formatting without writing changes
+- **`vp typecheck`** - Run native-preview typechecks for app and node targets
+- **`vp pre-build`** - Run tests, lint, format checks, and typechecks
 
 ## GraphQL Queries
 
@@ -291,34 +301,30 @@ The application uses several GraphQL queries to interact with the AniList API:
 
 ### TypeScript Configuration
 
+- Native-preview typechecking through `@typescript/native-preview` and `tsgo`
 - Modern ES2022 target with strict type checking
-- Path aliases configured for clean imports
-- Separate configurations for app, Node.js, and Vitest
+- Path aliases configured through `paths` (no `baseUrl`)
+- Separate configurations for app, Bun/node-side scripts, and Vitest
 
-### ESLint Configuration
+### Tooling Configuration
 
-- Vue 3 and TypeScript rules
-- Prettier integration for consistent formatting
-- Vitest plugin for test file linting
-
-### Stylelint Configuration
-
-- SCSS support with rational ordering
-- Vue SFC style block support
-- Recommended configurations for modern CSS
+- `vp lint` runs oxlint with Vue and TypeScript rules
+- `vp fmt` runs oxfmt for repository formatting
+- `vp test` handles unit tests in `jsdom`
 
 ## Production Deployment
 
 ### SSR Deployment (Recommended)
 
-This application uses a hybrid approach where both **build-time** and **runtime** environment variables are needed for proper operation.
+This application uses a hybrid approach where both **build-time** and **runtime** environment
+variables are needed for proper operation.
 
 #### Understanding Environment Variable Requirements
 
 **Critical**: This app requires `ANILIST_API_URL` at TWO different stages:
 
-1. **Build-time**: For client-side bundle (Vite processes `import.meta.env`)
-2. **Runtime**: For server-side rendering (Node.js `process.env`)
+1. **Build-time**: For the client bundle (Vite+ processes `import.meta.env`)
+2. **Runtime**: For server-side rendering on Bun
 
 #### Step-by-Step Deployment
 
@@ -364,7 +370,7 @@ This application uses a hybrid approach where both **build-time** and **runtime*
    ```
 
 4. **Server Configuration Details**:
-   - **Runtime**: Bun (v1.0+) or Node.js (v18+)
+   - **Runtime**: Bun (v1.3+)
    - **Port**: Defaults to 8080, configurable via `PORT` env var
    - **Host Binding**: Binds to `0.0.0.0` for external access
    - **Static Assets**: Serves from `dist/client/` directory
@@ -374,7 +380,8 @@ This application uses a hybrid approach where both **build-time** and **runtime*
 
 A complete `Dockerfile` is included in the project root with multi-stage build configuration:
 
-- **Build stage**: Installs dependencies, sets build-time environment variables, and builds the SSR bundle
+- **Build stage**: Installs dependencies, sets build-time environment variables, and builds the SSR
+  bundle
 - **Runtime stage**: Copies built artifacts and runs the production server on port 8080
 
 **Docker commands**:
@@ -430,7 +437,7 @@ export default async function handler(req, res) {
 1. **Build for static hosting**:
 
    ```bash
-   bun run build
+   bun run build-only
    ```
 
 2. **Deploy static files**:
@@ -449,7 +456,7 @@ export default async function handler(req, res) {
 **Important Notes**:
 
 - `ANILIST_API_URL` must be available at **both** build-time and runtime
-- Build-time variables are compiled into the client bundle by Vite
+- Build-time variables are compiled into the client bundle by Vite+
 - Runtime variables are accessed by the SSR server via `process.env`
 - Missing build-time variables will cause client-side errors
 - Missing runtime variables will cause SSR errors
@@ -500,4 +507,5 @@ This project is private and not licensed for public use.
 
 ## API Attribution
 
-This application uses data from [AniList](https://anilist.co/), a community-driven anime and manga database.
+This application uses data from [AniList](https://anilist.co/), a community-driven anime and manga
+database.

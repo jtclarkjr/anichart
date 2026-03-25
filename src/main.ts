@@ -1,7 +1,11 @@
-import { createApp } from 'vue'
+import { createApp, type Plugin } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import pages from '@/pages'
 import '@/assets/styles/anime.scss'
 
-createApp(App).use(pages).use(createPinia()).mount('#app')
+const app = createApp(App)
+
+app.use(pages)
+app.use(createPinia() as unknown as Plugin)
+app.mount('#app')

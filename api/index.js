@@ -44,7 +44,7 @@ export default async function handler(req, res) {
       res.setHeader('Cache-Control', 'public, max-age=31536000') // 1 year cache for assets
 
       return res.end(file)
-    } catch (error) {
+    } catch {
       // File not found, continue to SSR
     }
   }

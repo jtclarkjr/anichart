@@ -1,5 +1,5 @@
-import { createServer, ViteDevServer } from 'vite'
-import { createServer as createHttpServer } from 'node:http'
+import { createServer, type ViteDevServer } from 'vite-plus'
+import type { SSRRenderModule } from './src/types/ssr'
 
 const DEV_PORT = 5173
 const SSR_PORT = 5174
@@ -44,10 +44,7 @@ Bun.serve({
       )
 
       // Load server module and render
-      const {
-        render
-      }: { render: (url: string) => Promise<{ html: string; state: Record<string, unknown> }> } =
-        await ssrVite.ssrLoadModule('/src/entry-server.ts')
+      const { render } = (await ssrVite.ssrLoadModule('/src/entry-server.ts')) as SSRRenderModule
       const { html, state } = await render(pathname)
 
       // Replace SSR placeholders
