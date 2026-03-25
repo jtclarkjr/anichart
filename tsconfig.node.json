@@ -3,6 +3,7 @@
     "vite.config.*",
     "vitest.config.*",
     "cypress.config.*",
+    "api/index.ts",
     "dev-unified.ts",
     "dev-ssr.ts",
     "server-prod.ts",

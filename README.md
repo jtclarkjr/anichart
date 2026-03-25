@@ -424,8 +424,8 @@ PORT=8080 ANILIST_API_URL=https://graphql.anilist.co bun run start
 
 **Vercel** (SSR Functions):
 
-```javascript
-// api/index.js - Serverless function
+```typescript
+// api/index.ts - Serverless function
 export default async function handler(req, res) {
   // Your SSR server code here
   // Environment variables available via process.env
