@@ -77,7 +77,7 @@ const availableSeasons = computed(() => {
   // Spring
   seasons.push({
     value: 'SPRING',
-    label: `${seasonNames.SPRING} ${currentSeason === 'WINTER' ? year : year - 1}`
+    label: `${seasonNames.SPRING} ${year}`
   })
 
   // Summer
