@@ -1,4 +1,4 @@
-import type { SSRRenderModule } from '../src/types/ssr'
+import { getSSRRenderModule } from '../src/types/ssr'
 
 interface ServerlessRequest {
   url?: string
@@ -13,7 +13,7 @@ interface ServerlessResponse {
 
 // Import the built server bundle
 const serverEntryUrl = new URL('../dist/server/entry-server.mjs', import.meta.url)
-const { render } = (await import(serverEntryUrl.href)) as SSRRenderModule
+const { render } = getSSRRenderModule(await import(serverEntryUrl.href))
 const clientDistUrl = new URL('../dist/client/', import.meta.url)
 
 // Read the built client HTML template

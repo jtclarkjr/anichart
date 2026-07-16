@@ -1,4 +1,4 @@
-import { createSSRApp, type Plugin } from 'vue'
+import { createSSRApp } from 'vue'
 import { createPinia } from 'pinia'
 import { renderToString } from 'vue/server-renderer'
 import App from './App.vue'
@@ -16,7 +16,7 @@ export async function render(url: string, renderContext?: AppSSRContext): Promis
 
   // Install plugins
   app.use(pages)
-  app.use(pinia as unknown as Plugin)
+  app.use(pinia)
 
   // Set the current location for router
   await pages.push(url)

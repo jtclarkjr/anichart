@@ -1,4 +1,4 @@
-import { createSSRApp, type Plugin } from 'vue'
+import { createSSRApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import pages from '@/pages'
@@ -9,13 +9,15 @@ const app = createSSRApp(App)
 
 // Create Pinia instance and restore SSR state if available
 const pinia = createPinia()
-if (typeof window !== 'undefined' && window.__PINIA_STATE__) {
-  pinia.state.value = window.__PINIA_STATE__
+const initialState = typeof window !== 'undefined' ? window['__PINIA_STATE__'] : undefined
+
+if (initialState) {
+  pinia.state.value = initialState
 }
 
 // Install plugins
 app.use(pages)
-app.use(pinia as unknown as Plugin)
+app.use(pinia)
 
 // Wait for router to be ready and then mount
 void pages.isReady().then(() => {

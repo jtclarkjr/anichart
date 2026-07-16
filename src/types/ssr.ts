@@ -20,3 +20,20 @@ export interface SSRRenderFunction {
 export interface SSRRenderModule {
   render: SSRRenderFunction
 }
+
+const isSSRRenderFunction = (value: unknown): value is SSRRenderFunction =>
+  typeof value === 'function'
+
+export const getSSRRenderModule = (value: unknown): SSRRenderModule => {
+  if (typeof value !== 'object' || value === null || !('render' in value)) {
+    throw new TypeError('SSR entry module does not export a render function')
+  }
+
+  const { render } = value
+
+  if (!isSSRRenderFunction(render)) {
+    throw new TypeError('SSR entry module does not export a render function')
+  }
+
+  return { render }
+}

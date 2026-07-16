@@ -1,16 +1,16 @@
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import type { SSRRenderModule } from './src/types/ssr'
+import { getSSRRenderModule } from './src/types/ssr'
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
+const currentDir = dirname(fileURLToPath(import.meta.url))
 const port = process.env.PORT || 8080
 
 // Import the built server bundle
 const serverEntryUrl = new URL('./dist/server/entry-server.js', import.meta.url)
-const { render } = (await import(serverEntryUrl.href)) as SSRRenderModule
+const { render } = getSSRRenderModule(await import(serverEntryUrl.href))
 
 // Read the built client HTML template
-const template = await Bun.file(join(__dirname, 'dist/client/index.html')).text()
+const template = await Bun.file(join(currentDir, 'dist/client/index.html')).text()
 
 // Content types mapping
 const contentTypes: Record<string, string> = {
@@ -40,7 +40,7 @@ Bun.serve({
     // Serve static assets from dist/client
     if (pathname.startsWith('/assets/') || pathname.includes('.')) {
       try {
-        const filePath = join(__dirname, 'dist/client', pathname)
+        const filePath = join(currentDir, 'dist/client', pathname)
         const file = Bun.file(filePath)
 
         if (await file.exists()) {

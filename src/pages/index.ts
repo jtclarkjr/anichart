@@ -37,7 +37,7 @@ const pages = createRouter({
 if (typeof window !== 'undefined') {
   let isNavigating = false
 
-  pages.beforeEach((to, from, next) => {
+  pages.beforeEach((to, from) => {
     // Ignore Vite HMR and development paths in browser only
     if (
       to.path.startsWith('/@vite/') ||
@@ -54,7 +54,7 @@ if (typeof window !== 'undefined') {
       document.body.classList.add('route-loading')
     }
 
-    next()
+    return true
   })
 
   pages.afterEach(() => {

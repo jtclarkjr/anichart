@@ -1,5 +1,5 @@
 import { createServer, type ViteDevServer } from 'vite-plus'
-import type { SSRRenderModule } from './src/types/ssr'
+import { getSSRRenderModule } from './src/types/ssr'
 
 // Load environment variables
 const ANILIST_API_URL = process.env.ANILIST_API_URL || 'https://graphql.anilist.co'
@@ -139,7 +139,7 @@ Bun.serve({
       )
 
       // Load server module and render
-      const { render } = (await ssrVite.ssrLoadModule('/src/entry-server.ts')) as SSRRenderModule
+      const { render } = getSSRRenderModule(await ssrVite.ssrLoadModule('/src/entry-server.ts'))
       const { html, state } = await render(pathname)
 
       // Replace SSR placeholders

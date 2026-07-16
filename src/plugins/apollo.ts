@@ -13,10 +13,11 @@ const getGraphQLUri = (): string => {
   // For runtime access (like in production), use process.env
   // For build-time access (like in development), use import.meta.env
   // For client-side in production SSR, use window.__ENV__ passed from server
+  const runtimeEnv = typeof window !== 'undefined' ? window['__ENV__'] : undefined
   const apiUrl =
     (globalThis as RuntimeProcess).process?.env?.ANILIST_API_URL ||
     import.meta.env.ANILIST_API_URL ||
-    (typeof window !== 'undefined' && window.__ENV__ ? window.__ENV__.ANILIST_API_URL : undefined)
+    runtimeEnv?.ANILIST_API_URL
 
   if (!apiUrl) {
     throw new Error('ANILIST_API_URL environment variable is not set')

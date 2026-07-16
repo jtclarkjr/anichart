@@ -10,11 +10,14 @@
 //   console.log('Scrolling...', window.scrollY)
 // }, 200)
 
-const throttle = <T extends (...args: unknown[]) => unknown>(func: T, delay: number) => {
+const throttle = <TArgs extends unknown[], TResult>(
+  func: (...args: TArgs) => TResult,
+  delay: number
+) => {
   let isThrottled = false
 
-  return (...args: Parameters<T>) => {
-    if (isThrottled) return
+  return (...args: TArgs): TResult | undefined => {
+    if (isThrottled) return undefined
 
     isThrottled = true
     const result = func(...args)
