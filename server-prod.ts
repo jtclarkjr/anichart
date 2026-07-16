@@ -1,9 +1,26 @@
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { getSSRRenderModule } from './src/types/ssr'
+import type { SSRRenderFunction, SSRRenderModule } from './src/types/ssr'
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
 const port = process.env.PORT || 8080
+
+const isSSRRenderFunction = (value: unknown): value is SSRRenderFunction =>
+  typeof value === 'function'
+
+const getSSRRenderModule = (value: unknown): SSRRenderModule => {
+  if (typeof value !== 'object' || value === null || !('render' in value)) {
+    throw new TypeError('SSR entry module does not export a render function')
+  }
+
+  const { render } = value
+
+  if (!isSSRRenderFunction(render)) {
+    throw new TypeError('SSR entry module does not export a render function')
+  }
+
+  return { render }
+}
 
 // Import the built server bundle
 const serverEntryUrl = new URL('./dist/server/entry-server.js', import.meta.url)

@@ -428,15 +428,29 @@ vp run build:ssr
 PORT=8080 ANILIST_API_URL=https://graphql.anilist.co vp run start
 ```
 
-**Vercel** (SSR Functions):
+#### Vercel Container Images (Beta)
 
-```typescript
-// api/index.ts - Serverless function
-export default async function handler(req, res) {
-  // Your SSR server code here
-  // Environment variables available via process.env
-}
+Vercel can build and deploy the Bun SSR server as an OCI container image using the root
+`Dockerfile.vercel`. The Vercel image listens on port 80 and uses the same `ANILIST_API_URL` runtime
+configuration as the generic Docker image.
+
+```bash
+# Create or link the Vercel project
+vercel link --yes --project anichart
+
+# Add ANILIST_API_URL=https://graphql.anilist.co to all environments
+vercel env add ANILIST_API_URL
+
+# Deploy and validate a Preview before promoting Production
+vercel deploy
+vercel deploy --prod
+
+# Optional: connect the repository for deployments on future pushes
+vercel git connect --yes
 ```
+
+Container Images are stateless and scale to zero when idle. Store any future persistent state in an
+external database or cache.
 
 ### SPA Deployment (Static)
 

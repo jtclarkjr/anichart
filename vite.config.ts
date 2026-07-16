@@ -67,8 +67,11 @@ export const createAppConfig = (apiUrl: string | undefined, isSsrBuild = false) 
         scss: {}
       }
     },
+    ssr: {
+      noExternal: ['@apollo/client', 'graphql', 'graphql-tag']
+    },
     build: {
-      cssCodeSplit: !isSsrBuild,
+      cssCodeSplit: false,
       rollupOptions: isSsrBuild
         ? {
             input: {
