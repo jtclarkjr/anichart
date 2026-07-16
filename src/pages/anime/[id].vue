@@ -4,7 +4,7 @@
 
     <div v-if="error" class="error">
       <p>{{ error }}</p>
-      <button @click="() => loadAnimeDetails()" class="retry-btn">Retry</button>
+      <button @click="retryAnimeDetails" class="retry-btn">Retry</button>
     </div>
 
     <div v-else-if="anime" class="details-content">
@@ -43,81 +43,71 @@ import AnimeDescription from '@/components/AnimeDescription.vue'
 import AnimeMetadata from '@/components/AnimeMetadata.vue'
 import BackToListButton from '@/components/BackToListButton.vue'
 import { useAnimeStore } from '@/stores/anime'
-import type { Media } from '@/utils/types/anilist'
 
 const route = useRoute()
 const animeStore = useAnimeStore()
 
-// Reactive data - initialize consistently for SSR
-const anime = ref<Media | null>(null)
+const animeId = computed(() => {
+  const id = (route.params as { id?: string }).id
+  if (!id || typeof id !== 'string') {
+    return null
+  }
+
+  const parsedId = Number.parseInt(id, 10)
+  return Number.isNaN(parsedId) ? null : parsedId
+})
+
+const anime = computed(() =>
+  animeId.value === null ? undefined : animeStore.animeDetailsById[animeId.value]
+)
 const error = ref<string | null>(null)
 const isLoading = ref(false)
 
-// Data loading with better error handling
-const loadAnimeDetails = async (): Promise<Media | null> => {
-  const id = (route.params as { id?: string }).id
-  if (!id || typeof id !== 'string') {
+const loadAnimeDetails = async (): Promise<void> => {
+  if (animeId.value === null) {
     error.value = 'Invalid anime ID'
-    return null
-  }
-
-  const animeId = parseInt(id)
-  if (isNaN(animeId)) {
-    error.value = 'Invalid anime ID'
-    return null
-  }
-
-  // Don't reload if we already have the right data
-  if (anime.value && anime.value.id === animeId && !error.value) {
-    return anime.value
+    return
   }
 
   isLoading.value = true
   error.value = null
 
   try {
-    const result = await animeStore.loadAnimeDetails(animeId)
-    anime.value = result
-    return result
+    await animeStore.loadAnimeDetails(animeId.value)
   } catch (err) {
     error.value = 'Failed to load anime details. Please try again.'
     console.error('Error loading anime details:', err)
-    return null
   } finally {
     isLoading.value = false
   }
 }
 
-// Initialize data loading - non-blocking for better SSR/client coordination
-const initializeData = async () => {
-  const id = (route.params as { id?: string }).id
-  if (id) {
-    await loadAnimeDetails()
+const retryAnimeDetails = async () => {
+  if (animeId.value !== null) {
+    animeStore.invalidateAnimeDetails(animeId.value)
   }
+
+  await loadAnimeDetails()
 }
 
-// Use onServerPrefetch for SSR, onMounted for client-side
-onServerPrefetch(async () => {
-  await initializeData()
-})
+// Populate Pinia during SSR so the detail record is serialized into the response.
+onServerPrefetch(loadAnimeDetails)
 
-// Handle client-side mounting and route changes
+// Skip hydration and route-change requests when the record is already cached.
 onMounted(async () => {
-  // Load data if not already loaded during SSR
   if (!anime.value && !error.value) {
-    await initializeData()
+    await loadAnimeDetails()
   }
 })
 
-// Watch for route changes
-watch(
-  () => (route.params as { id?: string }).id,
-  async (newId, oldId) => {
-    if (newId && newId !== oldId) {
+watch(animeId, async (newId, oldId) => {
+  if (newId !== oldId) {
+    error.value = null
+    if (newId !== null && !animeStore.animeDetailsById[newId]) {
       await loadAnimeDetails()
     }
   }
-)
+})
 </script>
 
 <style scoped lang="scss">

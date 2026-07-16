@@ -41,9 +41,15 @@ import debounce from '@/utils/helpers/debounce'
 const router = useRouter()
 const animeStore = useAnimeStore()
 
-// Navigation
-const goToDetails = (id: number) => {
-  router.push(`/anime/${id}`)
+// Keep the populated list visible until the detail record is ready for the destination.
+const goToDetails = async (id: number) => {
+  try {
+    await animeStore.loadAnimeDetails(id)
+  } catch (error) {
+    console.error('Failed to prefetch anime details:', error)
+  }
+
+  await router.push(`/anime/${id}`)
 }
 
 // Reactive refs for two-way binding

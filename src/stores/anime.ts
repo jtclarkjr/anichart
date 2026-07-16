@@ -25,6 +25,9 @@ export interface AnimeState {
 
   // Cache for different filter combinations
   cache: Record<string, { data: Media[]; page: number; hasMore: boolean }>
+
+  // Detail records are serialized for SSR hydration and reused during SPA navigation
+  animeDetailsById: Record<number, Media>
 }
 
 export const useAnimeStore = defineStore('anime', {
@@ -42,7 +45,8 @@ export const useAnimeStore = defineStore('anime', {
       itemsPerPage: 50,
       totalAvailable: 0,
       hasNextPage: true,
-      cache: {}
+      cache: {},
+      animeDetailsById: {}
     }
   },
 
@@ -330,14 +334,26 @@ export const useAnimeStore = defineStore('anime', {
       return this.currentAnime.find((anime) => anime.id === id)
     },
 
-    // Load single anime details (always fetch fresh data for details)
+    // Load single anime details, reusing serialized SSR and navigation-prefetched data.
     async loadAnimeDetails(id: number): Promise<Media> {
+      const cachedAnime = this.animeDetailsById[id]
+      if (cachedAnime) {
+        return cachedAnime
+      }
+
       try {
-        return await getAnimeDetails(id)
+        const anime = await getAnimeDetails(id)
+        this.animeDetailsById[id] = anime
+        return anime
       } catch (error) {
         console.error('Error loading anime details:', error)
         throw error
       }
+    },
+
+    // Remove a detail record before retrying a failed or stale request.
+    invalidateAnimeDetails(id: number) {
+      delete this.animeDetailsById[id]
     }
   }
 })

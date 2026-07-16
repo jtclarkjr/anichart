@@ -52,6 +52,7 @@ export const createAppConfig = (apiUrl: string | undefined, isSsrBuild = false) 
       proseWrap: 'always',
       sortPackageJson: false,
       ignorePatterns: [
+        '*.md',
         'auto-imports.d.ts',
         'components.d.ts',
         'typed-router.d.ts',
