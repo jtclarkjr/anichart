@@ -2,6 +2,25 @@
   <div class="search-filters">
     <div class="search-section">
       <input v-model="searchModel" type="text" placeholder="Search anime..." class="search-input" />
+      <button
+        v-if="searchModel"
+        type="button"
+        class="search-clear"
+        aria-label="Clear search"
+        @click="clearSearch"
+      >
+        <svg
+          class="search-clear__icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </button>
     </div>
     <div class="filters">
       <select v-model="sortModel" @change="handleFilterChange" class="filter-select">
@@ -112,6 +131,11 @@ const availableSeasons = computed(() => {
 const handleFilterChange = () => {
   emit('filterChange')
 }
+
+const clearSearch = () => {
+  emit('update:searchQuery', '')
+  emit('filterChange')
+}
 </script>
 
 <style scoped lang="scss">
@@ -128,6 +152,7 @@ const handleFilterChange = () => {
 }
 
 .search-section {
+  position: relative;
   flex: 1;
   width: 100%;
 
@@ -144,7 +169,7 @@ const handleFilterChange = () => {
 
 .search-input {
   width: 100%;
-  padding: 12px 16px;
+  padding: 12px 48px 12px 16px;
   font-size: 1rem;
   color: var(--text-color);
   background: var(--bg-secondary);
@@ -159,6 +184,42 @@ const handleFilterChange = () => {
 
   &::placeholder {
     color: var(--text-muted);
+  }
+}
+
+.search-clear {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  color: var(--text-muted);
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+
+  &:hover {
+    color: var(--text-color);
+    background: var(--border-color);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+
+  &__icon {
+    width: 16px;
+    height: 16px;
   }
 }
 
