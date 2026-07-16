@@ -8,14 +8,14 @@ export {}
 declare global {
   const EffectScope: typeof import('vue').EffectScope
   const acceptHMRUpdate: typeof import('pinia').acceptHMRUpdate
-  const afterAll: typeof import('vitest').afterAll
-  const afterEach: typeof import('vitest').afterEach
-  const assert: typeof import('vitest').assert
-  const assertType: typeof import('vitest').assertType
-  const beforeAll: typeof import('vitest').beforeAll
-  const beforeEach: typeof import('vitest').beforeEach
-  const categoryService: (typeof import('./src/utils/api/index'))['categoryService']
-  const chai: typeof import('vitest').chai
+  const afterAll: typeof import('vite-plus/test').afterAll
+  const afterEach: typeof import('vite-plus/test').afterEach
+  const assert: typeof import('vite-plus/test').assert
+  const assertType: typeof import('vite-plus/test').assertType
+  const beforeAll: typeof import('vite-plus/test').beforeAll
+  const beforeEach: typeof import('vite-plus/test').beforeEach
+  const categoryService: (typeof import("./src/utils/api/index"))["categoryService"]
+  const chai: typeof import('vite-plus/test').chai
   const computed: typeof import('vue').computed
   const createApp: typeof import('vue').createApp
   const createPinia: typeof import('pinia').createPinia
@@ -24,9 +24,9 @@ declare global {
   const defineAsyncComponent: typeof import('vue').defineAsyncComponent
   const defineComponent: typeof import('vue').defineComponent
   const defineStore: typeof import('pinia').defineStore
-  const describe: typeof import('vitest').describe
+  const describe: typeof import('vite-plus/test').describe
   const effectScope: typeof import('vue').effectScope
-  const expect: typeof import('vitest').expect
+  const expect: typeof import('vite-plus/test').expect
   const getActivePinia: typeof import('pinia').getActivePinia
   const getCurrentInstance: typeof import('vue').getCurrentInstance
   const getCurrentScope: typeof import('vue').getCurrentScope
@@ -38,9 +38,9 @@ declare global {
   const isReadonly: typeof import('vue').isReadonly
   const isRef: typeof import('vue').isRef
   const isShallow: typeof import('vue').isShallow
-  const it: typeof import('vitest').it
-  const itemService: (typeof import('./src/utils/api/index'))['itemService']
-  const itemsService: (typeof import('./src/utils/api/index'))['itemsService']
+  const it: typeof import('vite-plus/test').it
+  const itemService: (typeof import("./src/utils/api/index"))["itemService"]
+  const itemsService: (typeof import("./src/utils/api/index"))["itemsService"]
   const mapActions: typeof import('pinia').mapActions
   const mapGetters: typeof import('pinia').mapGetters
   const mapState: typeof import('pinia').mapState
@@ -76,8 +76,8 @@ declare global {
   const shallowReadonly: typeof import('vue').shallowReadonly
   const shallowRef: typeof import('vue').shallowRef
   const storeToRefs: typeof import('pinia').storeToRefs
-  const suite: typeof import('vitest').suite
-  const test: typeof import('vitest').test
+  const suite: typeof import('vite-plus/test').suite
+  const test: typeof import('vite-plus/test').test
   const toRaw: typeof import('vue').toRaw
   const toRef: typeof import('vue').toRef
   const toRefs: typeof import('vue').toRefs
@@ -88,16 +88,16 @@ declare global {
   const useCssModule: typeof import('vue').useCssModule
   const useCssVars: typeof import('vue').useCssVars
   const useId: typeof import('vue').useId
-  const useItemStore: (typeof import('./src/stores/index'))['useItemStore']
-  const useItemsStore: (typeof import('./src/stores/index'))['useItemsStore']
+  const useItemStore: (typeof import("./src/stores/index"))["useItemStore"]
+  const useItemsStore: (typeof import("./src/stores/index"))["useItemsStore"]
   const useLink: typeof import('vue-router').useLink
   const useModel: typeof import('vue').useModel
   const useRoute: typeof import('vue-router').useRoute
   const useRouter: typeof import('vue-router').useRouter
   const useSlots: typeof import('vue').useSlots
   const useTemplateRef: typeof import('vue').useTemplateRef
-  const vi: typeof import('vitest').vi
-  const vitest: typeof import('vitest').vitest
+  const vi: typeof import('vite-plus/test').vi
+  const vitest: typeof import('vite-plus/test').vitest
   const watch: typeof import('vue').watch
   const watchEffect: typeof import('vue').watchEffect
   const watchPostEffect: typeof import('vue').watchPostEffect

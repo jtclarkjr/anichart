@@ -1,7 +1,7 @@
 import { fileURLToPath, URL } from 'node:url'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
-import { defineConfig, loadEnv } from 'vite-plus'
+import { configDefaults, defineConfig, loadEnv } from 'vite-plus'
 import VueRouter from 'unplugin-vue-router/vite'
 import vue from '@vitejs/plugin-vue'
 
@@ -9,6 +9,55 @@ export const createAppConfig = (apiUrl: string | undefined, isSsrBuild = false) 
   defineConfig({
     staged: {
       '*': 'vp check --fix'
+    },
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      exclude: [...configDefaults.exclude, 'e2e/**'],
+      root: fileURLToPath(new URL('./src', import.meta.url))
+    },
+    lint: {
+      plugins: ['vue', 'typescript', 'unicorn'],
+      categories: {
+        correctness: 'error',
+        suspicious: 'warn'
+      },
+      rules: {
+        'no-unused-vars': 'off',
+        'typescript/no-unused-vars': 'error',
+        'typescript/no-explicit-any': 'error'
+      },
+      ignorePatterns: [
+        'dist',
+        'dist-ssr',
+        'coverage',
+        'node_modules',
+        'auto-imports.d.ts',
+        'components.d.ts',
+        'typed-router.d.ts',
+        'src/auto-imports.d.ts',
+        'src/components.d.ts'
+      ],
+      options: {
+        typeAware: true,
+        typeCheck: true
+      }
+    },
+    fmt: {
+      semi: false,
+      tabWidth: 2,
+      singleQuote: true,
+      printWidth: 100,
+      trailingComma: 'none',
+      proseWrap: 'always',
+      sortPackageJson: false,
+      ignorePatterns: [
+        'auto-imports.d.ts',
+        'components.d.ts',
+        'typed-router.d.ts',
+        'src/auto-imports.d.ts',
+        'src/components.d.ts'
+      ]
     },
     define: {
       'import.meta.env.ANILIST_API_URL': JSON.stringify(apiUrl ?? '')
@@ -52,11 +101,25 @@ export const createAppConfig = (apiUrl: string | undefined, isSsrBuild = false) 
           'vue',
           'vue-router',
           'pinia',
-          'vitest',
           {
             '@vue/test-utils': ['mount'],
             '@pinia/testing': ['createTestingPinia'],
-            vitest: ['assertType']
+            'vite-plus/test': [
+              'afterAll',
+              'afterEach',
+              'assert',
+              'assertType',
+              'beforeAll',
+              'beforeEach',
+              'chai',
+              'describe',
+              'expect',
+              'it',
+              'suite',
+              'test',
+              'vi',
+              'vitest'
+            ]
           },
           {
             from: 'vue-router',

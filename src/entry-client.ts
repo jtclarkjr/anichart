@@ -18,6 +18,6 @@ app.use(pages)
 app.use(pinia as unknown as Plugin)
 
 // Wait for router to be ready and then mount
-pages.isReady().then(() => {
+void pages.isReady().then(() => {
   app.mount('#app')
 })

@@ -58,10 +58,13 @@ Bun.serve({
       return new Response(responseHtml, {
         headers: { 'Content-Type': 'text/html; charset=utf-8' }
       })
-    } catch (error: any) {
-      ssrVite.ssrFixStacktrace(error)
+    } catch (error) {
+      if (error instanceof Error) {
+        ssrVite.ssrFixStacktrace(error)
+      }
       console.error('SSR Error:', error)
-      return new Response(`<h1>SSR Error</h1><pre>${error.stack}</pre>`, {
+      const stack = error instanceof Error ? error.stack : String(error)
+      return new Response(`<h1>SSR Error</h1><pre>${stack}</pre>`, {
         status: 500,
         headers: { 'Content-Type': 'text/html; charset=utf-8' }
       })

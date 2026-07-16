@@ -28,7 +28,7 @@ TypeScript, Vue 3 Composition API, Apollo Client, and full Server-Side Rendering
 - **Testing**: Vite+ test runner with jsdom
 - **Linting**: Oxlint via `vp lint`
 - **Formatting**: Oxfmt via `vp fmt`
-- **Type Checking**: `@typescript/native-preview` via `tsgo`
+- **Type Checking**: Type-aware checks through `vp check`
 - **Auto Import**: Unplugin Auto Import for Vue composition functions
 
 ## Project Structure
@@ -76,17 +76,24 @@ server-prod.ts          # Production SSR server
 
 ### Prerequisites
 
-- **Bun** (v1.3 or higher) - [Install Bun](https://bun.sh/)
+- **Bun** (v1.3.14) - [Install Bun](https://bun.sh/)
+- **Vite+ CLI** - [Install Vite+](https://viteplus.dev/guide/)
 
 ### Installation
 
 1. Install dependencies:
 
 ```bash
-bun install
+vp install
 ```
 
-2. Set up environment variables:
+2. Configure the Vite+ project hooks:
+
+```bash
+vp config
+```
+
+3. Set up environment variables:
 
 ```bash
 cp .env.example .env
@@ -105,7 +112,7 @@ ANILIST_API_URL=https://graphql.anilist.co
 Run the unified development server with full SSR, HMR, and asset serving:
 
 ```bash
-bun run dev:ssr
+vp run dev:ssr
 ```
 
 - **URL**: `http://localhost:5174`
@@ -212,7 +219,7 @@ server-side rendering (SSR):
 │ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │
 │ ┌─────────────┐ │    │ ┌─────────────┐ │    │                 │
 │ │SSR Server   │ │    │ │SSR Rendering│ │    │                 │
-│ │:5174        │ │    │ │:3000        │ │    │                 │
+│ │:5174        │ │    │ │:8080        │ │    │                 │
 │ └─────────────┘ │    │ └─────────────┘ │    │                 │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
@@ -247,7 +254,7 @@ server-side rendering (SSR):
 
 ### Development Commands
 
-- **`vp dev:ssr`** - **Unified SSR development** (recommended)
+- **`vp run dev:ssr`** - **Unified SSR development** (recommended)
   - Starts the Bun SSR server and the `vp dev` asset server together
   - Full HMR, asset serving, and server-side rendering
   - Visit `http://localhost:5174`
@@ -256,37 +263,37 @@ server-side rendering (SSR):
   - Runs `vp dev` for client-only development
   - Visit `http://localhost:5173`
 
-- **`vp dev:ssr:simple`** - 🔨 **Simple SSR** (requires separate asset server)
-  - SSR server only, requires running `bun run dev` separately
+- **`vp run dev:ssr:simple`** - **Simple SSR** (requires separate asset server)
+  - SSR server only, requires running `vp dev` separately
   - Visit `http://localhost:5174`
 
 ### Production Commands
 
-- **`bun run build`** - **Full SSR build with checks**
-  - Runs tests, lint, format checks, native-preview typechecks, and SSR builds
+- **`vp run build`** - **Full SSR build with checks**
+  - Runs `vp check`, tests, and both SSR builds
 
-- **`bun run build:ssr`** - **Build for SSR production**
+- **`vp run build:ssr`** - **Build for SSR production**
   - Builds both client bundle and SSR server bundle
   - Outputs to `dist/client/` and `dist/server/`
 
-- **`bun run build:client`** - Build the client bundle only
-- **`bun run build:server`** - Build the SSR entry bundle only
+- **`vp run build:client`** - Build the client bundle only
+- **`vp run build:server`** - Build the SSR entry bundle only
 
-- **`bun run start`** - **Production SSR server**
+- **`vp run start`** - **Production SSR server**
   - Serves static assets and handles SSR
-  - Visit `http://localhost:3000`
+  - Visit `http://localhost:8080`
 
-- **`bun run preview:ssr`** - Build SSR bundles and start the Bun production server
-- **`bun run build-only`** - Build the client bundle without running checks
+- **`vp run preview:ssr`** - Build SSR bundles and start the Bun production server
+- **`vp run build-only`** - Build the client bundle without running checks
 
 ### Quality Commands
 
-- **`vp test:unit`** - Run unit tests with the Vite+ test runner
+- **`vp run test:unit`** - Run unit tests with the Vite+ test runner
 - **`vp lint`** - Run oxlint
 - **`vp fmt`** - Format the repo with oxfmt
-- **`vp fmt:check`** - Verify formatting without writing changes
-- **`vp typecheck`** - Run native-preview typechecks for app and node targets
-- **`vp pre-build`** - Run tests, lint, format checks, and typechecks
+- **`vp fmt --check .`** - Verify formatting without writing changes
+- **`vp check`** - Run formatting, linting, and type-aware checks together
+- **`vp run pre-build`** - Run `vp check` and unit tests
 
 ## GraphQL Queries
 
@@ -301,7 +308,7 @@ The application uses several GraphQL queries to interact with the AniList API:
 
 ### TypeScript Configuration
 
-- Native-preview typechecking through `@typescript/native-preview` and `tsgo`
+- Type-aware checking through Vite+ and tsgolint
 - Modern ES2022 target with strict type checking
 - Path aliases configured through `paths` (no `baseUrl`)
 - Separate configurations for app, Bun/node-side scripts, and Vitest
@@ -330,7 +337,7 @@ variables are needed for proper operation.
 
 1. **Prepare Environment Variables**:
 
-   **For Build Process** (required during `bun run build:ssr`):
+   **For Build Process** (required during `vp run build:ssr`):
 
    ```bash
    export ANILIST_API_URL=https://graphql.anilist.co
@@ -350,7 +357,7 @@ variables are needed for proper operation.
    export ANILIST_API_URL=https://graphql.anilist.co
 
    # Build both client and server bundles
-   bun run build:ssr
+   vp run build:ssr
    ```
 
    This creates:
@@ -366,7 +373,7 @@ variables are needed for proper operation.
    export NODE_ENV=production
 
    # Start the production server
-   bun run start
+   vp run start
    ```
 
 4. **Server Configuration Details**:
@@ -380,9 +387,8 @@ variables are needed for proper operation.
 
 A complete `Dockerfile` is included in the project root with multi-stage build configuration:
 
-- **Build stage**: Installs dependencies, sets build-time environment variables, and builds the SSR
-  bundle
-- **Runtime stage**: Copies built artifacts and runs the production server on port 8080
+- **Build and dependency stages**: Use the pinned Vite+ image and delegate installs to Bun
+- **Runtime stage**: Uses Bun 1.3.14, copies built artifacts, and serves on port 8080
 
 **Docker commands**:
 
@@ -416,10 +422,10 @@ echo "PORT=8080" >> .env.production
 
 # 2. Load environment and build
 source .env.production
-bun run build:ssr
+vp run build:ssr
 
 # 3. Run with process manager (PM2, systemd, etc.)
-PORT=8080 ANILIST_API_URL=https://graphql.anilist.co bun run start
+PORT=8080 ANILIST_API_URL=https://graphql.anilist.co vp run start
 ```
 
 **Vercel** (SSR Functions):
@@ -437,7 +443,7 @@ export default async function handler(req, res) {
 1. **Build for static hosting**:
 
    ```bash
-   bun run build-only
+   vp run build-only
    ```
 
 2. **Deploy static files**:
@@ -475,8 +481,8 @@ export default async function handler(req, res) {
 1. **Test locally first**:
 
    ```bash
-   bun run build:ssr
-   bun run start
+   vp run build:ssr
+   vp run start
    # Visit http://localhost:8080
    ```
 

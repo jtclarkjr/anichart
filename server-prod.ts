@@ -82,7 +82,7 @@ Bun.serve({
           'Cache-Control': 'no-cache' // Don't cache HTML pages
         }
       })
-    } catch (error: any) {
+    } catch (error) {
       console.error('SSR Error:', error)
       return new Response(`<h1>Server Error</h1><p>Something went wrong</p>`, {
         status: 500,

@@ -40,17 +40,16 @@ const httpLink = new HttpLink({
   uri: graphqlUri,
   fetch: (uri, options) => {
     // console.log('Making GraphQL request to:', uri)
+    const headers = new Headers(options?.headers)
+    if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/json')
+    if (!headers.has('Accept')) headers.set('Accept', 'application/json')
+    if (typeof window === 'undefined' && !headers.has('User-Agent')) {
+      headers.set('User-Agent', 'AniChart SSR/1.0')
+    }
+
     return fetch(uri, {
       ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        // Add User-Agent for server-side requests
-        ...(typeof window === 'undefined' && {
-          'User-Agent': 'AniChart SSR/1.0'
-        }),
-        ...options?.headers
-      }
+      headers
     }).catch((error) => {
       console.error('GraphQL fetch error:', error)
       throw error

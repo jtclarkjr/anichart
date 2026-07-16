@@ -3,6 +3,6 @@
   "include": ["src/**/__tests__/*", "src/**/*.{test,spec}.{js,ts,jsx,tsx}", "src/env.d.ts"],
   "exclude": [],
   "compilerOptions": {
-    "types": ["vitest/globals", "jsdom", "node"]
+    "types": ["vite-plus/test/globals", "jsdom", "node"]
   }
 }

@@ -1,47 +1,28 @@
 # syntax = docker/dockerfile:1
 
-# Adjust BUN_VERSION as desired
-ARG BUN_VERSION=1.3.0
-FROM oven/bun:${BUN_VERSION}-slim AS base
+ARG VP_VERSION=0.2.4
+ARG BUN_VERSION=1.3.14
 
-# Bun app lives here
+FROM ghcr.io/voidzero-dev/vite-plus:${VP_VERSION} AS build
 WORKDIR /app
+COPY --chown=vp:vp bun.lock bunfig.toml package.json ./
+RUN vp install --frozen-lockfile
 
-# Set production environment
+COPY --chown=vp:vp . .
+RUN vp run build:ssr
+
+FROM ghcr.io/voidzero-dev/vite-plus:${VP_VERSION} AS deps
+WORKDIR /app
+COPY --chown=vp:vp bun.lock bunfig.toml package.json ./
+RUN vp install --frozen-lockfile --prod
+
+FROM oven/bun:${BUN_VERSION}-slim AS runtime
+WORKDIR /app
 ENV NODE_ENV="production"
-
-
-# Throw-away build stage to reduce size of final image
-FROM base AS build
-
-# Install packages needed to build node modules
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential pkg-config python-is-python3
-
-# Install node modules
-COPY bun.lock package.json ./
-RUN bun install
-
-# Copy application code
-COPY . .
-
-# Build application
-RUN bun run build:ssr
-
-# Remove development dependencies
-RUN rm -rf node_modules && \
-    bun install --ci
-
-
-# Final stage for app image
-FROM base AS runtime
-
-# Copy built application and server files
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/server-prod.ts ./
-COPY --from=build /app/node_modules ./node_modules
+COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build /app/package.json ./
 
-# Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
+EXPOSE 8080
 CMD ["bun", "run", "start"]
