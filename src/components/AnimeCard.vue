@@ -2,9 +2,16 @@
   <div class="anime-card" @click="$emit('click', anime.id)">
     <div class="card-image">
       <img
-        :src="getSafeImageUrl(anime.coverImage)"
+        ref="imageRef"
+        :src="cardImageSrc"
+        :srcset="cardImageSrcset"
+        :sizes="CARD_IMAGE_SIZES"
         :alt="getDisplayTitle(anime.title)"
+        :class="{ 'image-loaded': imageLoaded }"
         loading="lazy"
+        decoding="async"
+        @load="handleImageLoad"
+        @error="handleImageError"
       />
       <div class="card-overlay">
         <div class="score" v-if="anime.averageScore">{{ anime.averageScore }}%</div>
@@ -26,6 +33,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { AnimeApi } from '@/utils/api/anime.api'
 import type { Media } from '@/utils/types/anilist'
 
@@ -33,14 +41,68 @@ interface Props {
   anime: Media
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 defineEmits<{
   click: [id: number]
 }>()
 
+const CARD_IMAGE_SIZES =
+  '(min-width: 1024px) 220px, (min-width: 768px) 200px, (min-width: 640px) 180px, (min-width: 480px) 160px, 140px'
+
+const imageLoaded = ref(false)
+const imageRef = ref<HTMLImageElement | null>(null)
+
+const cardImageSrc = computed(() => {
+  const { extraLarge, large, medium } = props.anime.coverImage
+  return large || extraLarge || medium || undefined
+})
+
+const cardImageSrcset = computed(() => {
+  const { extraLarge, large, medium } = props.anime.coverImage
+  const candidates: Array<[string | null, number]> = [
+    [medium, 100],
+    [large, 230],
+    [extraLarge, 460]
+  ]
+  const seenUrls = new Set<string>()
+
+  const srcset = candidates
+    .filter((candidate): candidate is [string, number] => {
+      const [url] = candidate
+      if (!url || seenUrls.has(url)) return false
+      seenUrls.add(url)
+      return true
+    })
+    .map(([url, width]) => `${url} ${width}w`)
+    .join(', ')
+
+  return srcset || undefined
+})
+
+const handleImageLoad = () => {
+  imageLoaded.value = true
+}
+
+const handleImageError = () => {
+  imageLoaded.value = true
+}
+
+const syncCachedImage = () => {
+  if (imageRef.value?.complete) {
+    imageLoaded.value = true
+  }
+}
+
+onMounted(syncCachedImage)
+
+watch(cardImageSrc, async () => {
+  imageLoaded.value = false
+  await nextTick()
+  syncCachedImage()
+})
+
 // Helper functions
 const getDisplayTitle = AnimeApi.getDisplayTitle
-const getSafeImageUrl = AnimeApi.getSafeImageUrl
 const formatYear = AnimeApi.formatYear
 </script>
 
@@ -68,8 +130,15 @@ const formatYear = AnimeApi.formatYear
   img {
     width: 100%;
     height: 100%;
+    opacity: 0;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    transition:
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.image-loaded {
+      opacity: 1;
+    }
   }
 
   &:hover img {
@@ -140,5 +209,26 @@ const formatYear = AnimeApi.formatYear
   color: var(--text-color);
   background: var(--accent-color);
   border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anime-card {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+
+  .card-image {
+    img {
+      opacity: 1;
+      transition: none;
+    }
+
+    &:hover img {
+      transform: none;
+    }
+  }
 }
 </style>

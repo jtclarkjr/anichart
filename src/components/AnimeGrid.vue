@@ -15,14 +15,21 @@
       <p>No anime found</p>
     </div>
 
-    <div v-else-if="shouldShowGrid" class="anime-grid">
+    <TransitionGroup
+      v-else-if="shouldShowGrid"
+      name="anime-card"
+      tag="div"
+      class="anime-grid"
+      appear
+    >
       <AnimeCard
-        v-for="item in anime"
+        v-for="(item, index) in anime"
         :key="item.id"
         :anime="item"
+        :style="{ '--card-delay': getCardDelay(index) }"
         @click="$emit('animeClick', $event)"
       />
-    </div>
+    </TransitionGroup>
 
     <div v-if="hasMoreToShow" ref="loadTrigger" class="load-trigger">
       <div v-if="loadingMore" class="loading-more">
@@ -37,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import AnimeCard from './AnimeCard.vue'
 import type { Media } from '@/utils/types/anilist'
 
@@ -64,6 +71,21 @@ const isHydrated = ref(false)
 
 // Load trigger ref for intersection observer
 const loadTrigger = ref<HTMLElement | null>(null)
+const batchStartIndex = ref(0)
+
+const animeIds = computed(() => props.anime.map(({ id }) => id))
+
+watch(animeIds, (nextIds, previousIds) => {
+  const appendedToPreviousBatch =
+    nextIds.length > previousIds.length && previousIds.every((id, index) => nextIds[index] === id)
+
+  batchStartIndex.value = appendedToPreviousBatch ? previousIds.length : 0
+})
+
+const getCardDelay = (index: number): string => {
+  const batchIndex = Math.max(index - batchStartIndex.value, 0)
+  return `${Math.min(batchIndex, 10) * 40}ms`
+}
 
 // Mark as hydrated after mount
 onMounted(() => {
