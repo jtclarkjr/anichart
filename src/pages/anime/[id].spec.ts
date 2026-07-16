@@ -55,6 +55,7 @@ const stubs = {
 
 describe('Anime details navigation', () => {
   it('renders SSR-hydrated details without loading again on mount', async () => {
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
     const router = createTestRouter()
     const pinia = createTestingPinia({
       createSpy: vi.fn,
@@ -74,6 +75,9 @@ describe('Anime details navigation', () => {
     expect(wrapper.get('[data-test="anime-title"]').text()).toBe('Anime 1')
     expect(wrapper.find('.loading').exists()).toBe(false)
     expect(loadAnimeDetails).not.toHaveBeenCalled()
+    expect(scrollTo).toHaveBeenCalledWith(0, 0)
+
+    scrollTo.mockRestore()
   })
 
   it('uses a cached route target and loads an uncached target once', async () => {

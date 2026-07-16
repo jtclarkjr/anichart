@@ -2,12 +2,7 @@
   <div id="app">
     <Suspense>
       <router-view v-slot="{ Component, route }">
-        <transition
-          :name="getTransitionName(route)"
-          mode="out-in"
-          @enter="onEnter"
-          @leave="onLeave"
-        >
+        <transition :name="getTransitionName(route)" mode="out-in">
           <div :key="route.path" class="page-wrapper">
             <component :is="Component" />
           </div>
@@ -35,28 +30,6 @@ const getTransitionName = (route: RouteLocationNormalized): string => {
   // Default fade transition for other navigation
   return 'fade'
 }
-
-// Transition event handlers
-const onEnter = (el: Element) => {
-  // Ensure smooth entry
-  if (el instanceof HTMLElement) {
-    el.style.opacity = '0'
-    el.style.transform = 'translateY(10px)'
-    void el.offsetHeight // Force reflow
-    el.style.transition = 'opacity 0.3s ease, transform 0.3s ease'
-    el.style.opacity = '1'
-    el.style.transform = 'translateY(0)'
-  }
-}
-
-const onLeave = (el: Element) => {
-  // Ensure smooth exit
-  if (el instanceof HTMLElement) {
-    el.style.transition = 'opacity 0.15s ease, transform 0.15s ease'
-    el.style.opacity = '0'
-    el.style.transform = 'translateY(-5px)'
-  }
-}
 </script>
 
 <style lang="scss">
@@ -75,9 +48,12 @@ const onLeave = (el: Element) => {
 }
 
 // Transition animations
-.fade-enter-active,
+.fade-enter-active {
+  transition: opacity 200ms ease;
+}
+
 .fade-leave-active {
-  transition: opacity 0.3s ease;
+  transition: opacity 150ms ease;
 }
 
 .fade-enter-from,
@@ -86,43 +62,25 @@ const onLeave = (el: Element) => {
 }
 
 .fade-slide-enter-active {
-  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
 }
 
 .fade-slide-leave-active {
-  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease;
 }
 
 .fade-slide-enter-from {
   opacity: 0;
-  transform: translateY(20px) scale(0.95);
+  transform: translateY(6px);
 }
 
 .fade-slide-leave-to {
   opacity: 0;
-  transform: translateY(-10px) scale(1.02);
-}
-
-// Ensure smooth transitions on route change
-.fade-slide-enter-active .anime-details,
-.fade-slide-enter-active .anime-list {
-  will-change: transform, opacity;
-}
-
-// Loading state improvements
-.route-loading {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-primary, #1a1a1a);
-
-  .loading-content {
-    color: var(--text-muted, #888);
-    text-align: center;
-  }
+  transform: translateY(-4px);
 }
 
 .app-loading {
@@ -161,40 +119,17 @@ const onLeave = (el: Element) => {
   }
 }
 
-// Global loading state for route transitions
-body.route-loading {
-  &::before {
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    z-index: 10000;
-    height: 3px;
-    content: '';
-    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-    animation: loading-bar 1s ease-in-out infinite alternate;
+@media (prefers-reduced-motion: reduce) {
+  .fade-enter-active,
+  .fade-leave-active,
+  .fade-slide-enter-active,
+  .fade-slide-leave-active {
+    transition: none;
   }
 
-  // Slightly reduce opacity during navigation
-  #app {
-    opacity: 0.98;
-    transition: opacity 0.2s ease;
-  }
-}
-
-@keyframes loading-bar {
-  0% {
-    opacity: 0;
-    transform: translateX(-100%);
-  }
-
-  50% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translateX(100vw);
+  .fade-slide-enter-from,
+  .fade-slide-leave-to {
+    transform: none;
   }
 }
 </style>

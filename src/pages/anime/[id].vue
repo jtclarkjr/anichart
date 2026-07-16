@@ -95,6 +95,10 @@ onServerPrefetch(loadAnimeDetails)
 
 // Skip hydration and route-change requests when the record is already cached.
 onMounted(async () => {
+  // With out-in transitions, the list has finished leaving before this runs.
+  // Reset only the new detail view so the visible list never jumps during prefetch.
+  window.scrollTo(0, 0)
+
   if (!anime.value && !error.value) {
     await loadAnimeDetails()
   }

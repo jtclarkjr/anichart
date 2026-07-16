@@ -33,46 +33,10 @@ const pages = createRouter({
   ]
 })
 
-// Add navigation guards (client-side only)
+// Report client-side navigation errors without mutating document layout.
 if (typeof window !== 'undefined') {
-  let isNavigating = false
-
-  pages.beforeEach((to, from) => {
-    // Ignore Vite HMR and development paths in browser only
-    if (
-      to.path.startsWith('/@vite/') ||
-      to.path.startsWith('/__vite') ||
-      to.path.startsWith('/src/')
-    ) {
-      return false
-    }
-
-    // Set loading state for navigation
-    if (from.path !== to.path) {
-      isNavigating = true
-      // Add a subtle loading class to body for global styling
-      document.body.classList.add('route-loading')
-    }
-
-    return true
-  })
-
-  pages.afterEach(() => {
-    // Clear loading state after navigation completes
-    if (isNavigating) {
-      // Small delay to allow for smooth transition
-      setTimeout(() => {
-        document.body.classList.remove('route-loading')
-        isNavigating = false
-      }, 100)
-    }
-  })
-
-  // Handle navigation errors
   pages.onError((error) => {
     console.error('Router navigation error:', error)
-    document.body.classList.remove('route-loading')
-    isNavigating = false
   })
 }
 
