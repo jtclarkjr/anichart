@@ -1,5 +1,7 @@
 <template>
   <div class="anime-details">
+    <BackToListButton />
+
     <div v-if="error" class="error">
       <p>{{ error }}</p>
       <button @click="() => loadAnimeDetails()" class="retry-btn">Retry</button>
@@ -31,7 +33,6 @@
     <!-- Empty state for when no data and no error (shouldn't happen with proper routing) -->
     <div v-else class="error">
       <p>Anime not found</p>
-      <button @click="() => $router.push('/anime')" class="retry-btn">Back to Anime List</button>
     </div>
   </div>
 </template>
@@ -40,6 +41,7 @@
 import AnimeBanner from '@/components/AnimeBanner.vue'
 import AnimeDescription from '@/components/AnimeDescription.vue'
 import AnimeMetadata from '@/components/AnimeMetadata.vue'
+import BackToListButton from '@/components/BackToListButton.vue'
 import { useAnimeStore } from '@/stores/anime'
 import type { Media } from '@/utils/types/anilist'
 
