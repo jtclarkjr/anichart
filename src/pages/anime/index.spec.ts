@@ -46,6 +46,9 @@ const createTestRouter = () =>
 
 const stubs = {
   SearchFilters: true,
+  ScrollToTop: {
+    template: '<div data-test="scroll-to-top"></div>'
+  },
   AnimeGrid: {
     emits: ['animeClick'],
     template: '<button data-test="open-details" @click="$emit(\'animeClick\', 1)">Open</button>'
@@ -76,6 +79,8 @@ describe('Anime list detail navigation', () => {
     await router.push('/anime')
     await router.isReady()
     const wrapper = mount(AnimeIndex, { global: { plugins: [pinia, router], stubs } })
+
+    expect(wrapper.find('[data-test="scroll-to-top"]').exists()).toBe(true)
 
     await wrapper.get('[data-test="open-details"]').trigger('click')
     expect(router.currentRoute.value.path).toBe('/anime')

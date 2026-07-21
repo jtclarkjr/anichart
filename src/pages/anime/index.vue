@@ -27,6 +27,8 @@
         @retry="animeStore.loadInitialData"
       />
     </div>
+
+    <ScrollToTop />
   </div>
 </template>
 
@@ -35,6 +37,7 @@ import { ref, computed, onMounted, onUnmounted, onServerPrefetch, nextTick } fro
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import SearchFilters from '@/components/SearchFilters.vue'
 import AnimeGrid from '@/components/AnimeGrid.vue'
+import ScrollToTop from '@/components/ScrollToTop.vue'
 import { useAnimeStore } from '@/stores/anime'
 import debounce from '@/utils/helpers/debounce'
 

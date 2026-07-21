@@ -22,6 +22,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     RouteTransition: typeof import('./src/components/RouteTransition.vue')['default']
+    ScrollToTop: typeof import('./src/components/ScrollToTop.vue')['default']
     SearchFilters: typeof import('./src/components/SearchFilters.vue')['default']
   }
 }
@@ -38,5 +39,6 @@ declare global {
   const RouterLink: typeof import('vue-router')['RouterLink']
   const RouterView: typeof import('vue-router')['RouterView']
   const RouteTransition: typeof import('./src/components/RouteTransition.vue')['default']
+  const ScrollToTop: typeof import('./src/components/ScrollToTop.vue')['default']
   const SearchFilters: typeof import('./src/components/SearchFilters.vue')['default']
 }
