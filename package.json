@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@apollo/client": "^4.2.6",
+    "@vercel/analytics": "^2.0.1",
     "graphql": "^17.0.2",
     "pinia": "^3.0.4",
     "vue": "^3.5.39",
