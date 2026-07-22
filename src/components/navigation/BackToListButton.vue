@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import Button from './ui/Button.vue'
+import Button from '../ui/Button.vue'
 </script>
 
 <style scoped lang="scss">

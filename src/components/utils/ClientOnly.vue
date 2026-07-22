@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import Spinner from './ui/Spinner.vue'
+import Spinner from '../ui/Spinner.vue'
 
 const isMounted = ref(false)
 

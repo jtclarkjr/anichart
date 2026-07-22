@@ -46,8 +46,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import AnimeCard from './AnimeCard.vue'
-import Button from './ui/Button.vue'
-import Spinner from './ui/Spinner.vue'
+import Button from '../ui/Button.vue'
+import Spinner from '../ui/Spinner.vue'
 import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
 import type { Media } from '@/utils/types/anilist'
 

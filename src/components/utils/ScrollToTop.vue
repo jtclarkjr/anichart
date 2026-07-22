@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import Button from './ui/Button.vue'
+import Button from '../ui/Button.vue'
 import { useScrollToTop } from '@/composables/useScrollToTop'
 
 const { isVisible, scrollToTop } = useScrollToTop()

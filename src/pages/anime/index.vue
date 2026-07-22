@@ -35,9 +35,9 @@
 <script setup lang="ts">
 import { computed, onMounted, onServerPrefetch } from 'vue'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
-import SearchFilters from '@/components/SearchFilters.vue'
-import AnimeGrid from '@/components/AnimeGrid.vue'
-import ScrollToTop from '@/components/ScrollToTop.vue'
+import SearchFilters from '@/components/search/SearchFilters.vue'
+import AnimeGrid from '@/components/anime/AnimeGrid.vue'
+import ScrollToTop from '@/components/utils/ScrollToTop.vue'
 import { useAnimeStore } from '@/stores/anime'
 import debounce from '@/utils/helpers/debounce'
 

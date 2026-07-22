@@ -38,10 +38,10 @@
 </template>
 
 <script setup lang="ts">
-import AnimeBanner from '@/components/AnimeBanner.vue'
-import AnimeDescription from '@/components/AnimeDescription.vue'
-import AnimeMetadata from '@/components/AnimeMetadata.vue'
-import BackToListButton from '@/components/BackToListButton.vue'
+import AnimeBanner from '@/components/anime/AnimeBanner.vue'
+import AnimeDescription from '@/components/anime/AnimeDescription.vue'
+import AnimeMetadata from '@/components/anime/AnimeMetadata.vue'
+import BackToListButton from '@/components/navigation/BackToListButton.vue'
 import Button from '@/components/ui/Button.vue'
 import Spinner from '@/components/ui/Spinner.vue'
 import { useAnimeStore } from '@/stores/anime'
