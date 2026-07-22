@@ -6,9 +6,10 @@
     "src/**/*.vue",
     "components.d.ts",
     "auto-imports.d.ts",
-    "typed-router.d.ts"
+    "typed-router.d.ts",
+    ".storybook/**/*"
   ],
-  "exclude": ["src/**/__tests__/*"],
+  "exclude": [],
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",

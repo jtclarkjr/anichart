@@ -15,7 +15,7 @@
     <transition name="loading-fade">
       <div v-if="isTransitioning" class="transition-loading">
         <div class="loading-indicator">
-          <div class="spinner"></div>
+          <Spinner decorative size="md" />
           <p>Loading...</p>
         </div>
       </div>
@@ -24,6 +24,8 @@
 </template>
 
 <script setup lang="ts">
+import Spinner from './ui/Spinner.vue'
+
 interface Props {
   transitionName?: string
   showLoadingOverlay?: boolean
@@ -130,15 +132,6 @@ const onAfterLeave = () => {
     border-radius: 12px;
     box-shadow: 0 10px 40px rgb(0 0 0 / 20%);
 
-    .spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid var(--border-color);
-      border-top: 3px solid var(--primary-color);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
     p {
       margin: 0;
       font-size: 0.9rem;
@@ -155,14 +148,5 @@ const onAfterLeave = () => {
 .loading-fade-enter-from,
 .loading-fade-leave-to {
   opacity: 0;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 </style>

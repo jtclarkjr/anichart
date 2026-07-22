@@ -15,7 +15,6 @@
 
     <div class="container">
       <AnimeGrid
-        ref="animeGridRef"
         :anime="animeStore.displayedAnime"
         :loading="animeStore.loading"
         :loadingMore="animeStore.loadingMore"
@@ -25,6 +24,7 @@
         :totalCount="animeStore.currentCount"
         @animeClick="goToDetails"
         @retry="animeStore.loadInitialData"
+        @loadMore="animeStore.loadMoreData"
       />
     </div>
 
@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, onServerPrefetch, nextTick } from 'vue'
+import { computed, onMounted, onServerPrefetch } from 'vue'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import SearchFilters from '@/components/SearchFilters.vue'
 import AnimeGrid from '@/components/AnimeGrid.vue'
@@ -87,82 +87,6 @@ const handleSearch = debounce(() => {
   }
 }, 300)
 
-// Reference to the AnimeGrid component
-const animeGridRef = ref()
-let observer: IntersectionObserver | null = null
-let scrollListener: ((event: Event) => void) | null = null
-
-const setupShowMore = () => {
-  // Clean up any existing observer first
-  cleanupObserver()
-
-  const loadTrigger = animeGridRef.value?.loadTrigger
-  if (!loadTrigger) {
-    // If loadTrigger is not available yet, try again after a short delay
-    setTimeout(() => {
-      setupShowMore()
-    }, 100)
-    return
-  }
-
-  observer = new IntersectionObserver(
-    (entries) => {
-      const entry = entries[0]
-      if (
-        entry?.isIntersecting &&
-        animeStore.hasMoreToShow &&
-        !animeStore.loading &&
-        !animeStore.loadingMore
-      ) {
-        animeStore.loadMoreData()
-      }
-    },
-    {
-      root: null,
-      rootMargin: '200px',
-      threshold: 0.1
-    }
-  )
-
-  observer.observe(loadTrigger)
-
-  // Add a fallback scroll listener in case intersection observer has issues
-  setupScrollFallback()
-}
-
-const setupScrollFallback = () => {
-  if (scrollListener) {
-    window.removeEventListener('scroll', scrollListener)
-  }
-
-  scrollListener = () => {
-    const scrollHeight = document.documentElement.scrollHeight
-    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-    const clientHeight = document.documentElement.clientHeight
-
-    // Trigger load more when within 200px of bottom
-    if (scrollTop + clientHeight >= scrollHeight - 200) {
-      if (animeStore.hasMoreToShow && !animeStore.loading && !animeStore.loadingMore) {
-        animeStore.loadMoreData()
-      }
-    }
-  }
-
-  window.addEventListener('scroll', scrollListener, { passive: true })
-}
-
-const cleanupObserver = () => {
-  if (observer) {
-    observer.disconnect()
-    observer = null
-  }
-
-  if (scrollListener) {
-    window.removeEventListener('scroll', scrollListener)
-    scrollListener = null
-  }
-}
-
 // SSR Prefetch - runs on server during SSR
 onServerPrefetch(async () => {
   // Load anime data during SSR
@@ -171,18 +95,10 @@ onServerPrefetch(async () => {
 
 // Initialize on client
 onMounted(async () => {
-  await nextTick()
-
   // Load anime data if not already loaded (client-side fallback)
   if (animeStore.currentAnime.length === 0) {
     await animeStore.loadInitialData()
   }
-
-  // Setup show more after data is loaded and DOM is ready
-  // Use multiple nextTick calls to ensure the AnimeGrid component is fully rendered
-  await nextTick()
-  await nextTick()
-  setupShowMore()
 })
 
 // Clear cache on navigation to ensure fresh data
@@ -192,11 +108,6 @@ onBeforeRouteLeave(() => {
   if (!currentRoute.path.startsWith('/anime/')) {
     animeStore.cache = {}
   }
-})
-
-// Cleanup on unmount
-onUnmounted(() => {
-  cleanupObserver()
 })
 </script>
 

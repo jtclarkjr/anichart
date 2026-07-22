@@ -33,7 +33,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed } from 'vue'
+import { useProgressiveImage } from '@/composables/useProgressiveImage'
 import { AnimeApi } from '@/utils/api/anime.api'
 import type { Media } from '@/utils/types/anilist'
 
@@ -48,9 +49,6 @@ defineEmits<{
 
 const CARD_IMAGE_SIZES =
   '(min-width: 1024px) 220px, (min-width: 768px) 200px, (min-width: 640px) 180px, (min-width: 480px) 160px, 140px'
-
-const imageLoaded = ref(false)
-const imageRef = ref<HTMLImageElement | null>(null)
 
 const cardImageSrc = computed(() => {
   const { extraLarge, large, medium } = props.anime.coverImage
@@ -79,27 +77,12 @@ const cardImageSrcset = computed(() => {
   return srcset || undefined
 })
 
-const handleImageLoad = () => {
-  imageLoaded.value = true
-}
-
-const handleImageError = () => {
-  imageLoaded.value = true
-}
-
-const syncCachedImage = () => {
-  if (imageRef.value?.complete) {
-    imageLoaded.value = true
-  }
-}
-
-onMounted(syncCachedImage)
-
-watch(cardImageSrc, async () => {
-  imageLoaded.value = false
-  await nextTick()
-  syncCachedImage()
-})
+const {
+  imageRef,
+  isLoaded: imageLoaded,
+  handleLoad: handleImageLoad,
+  handleError: handleImageError
+} = useProgressiveImage(cardImageSrc)
 
 // Helper functions
 const getDisplayTitle = AnimeApi.getDisplayTitle

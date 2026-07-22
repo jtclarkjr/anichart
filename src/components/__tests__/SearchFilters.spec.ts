@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import SearchFilters from './SearchFilters.vue'
+import SearchFilters from '../SearchFilters.vue'
 import { MediaSeason, MediaSort } from '@/utils/types/anilist'
 
 const createProps = (searchQuery: string) => ({

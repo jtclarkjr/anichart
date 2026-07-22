@@ -10,7 +10,7 @@
       </router-view>
       <template #fallback>
         <div class="app-loading">
-          <div class="loading-spinner"></div>
+          <Spinner class="app-loading__spinner" decorative size="xl" />
           <p>Loading...</p>
         </div>
       </template>
@@ -19,6 +19,7 @@
 </template>
 
 <script setup lang="ts">
+import Spinner from '@/components/ui/Spinner.vue'
 import type { RouteLocationNormalized } from 'vue-router'
 
 // Determine transition type based on route
@@ -92,30 +93,14 @@ const getTransitionName = (route: RouteLocationNormalized): string => {
   color: var(--text-muted, #888);
   background: var(--bg-primary, #1a1a1a);
 
-  .loading-spinner {
-    width: 48px;
-    height: 48px;
+  &__spinner {
     margin-bottom: 1rem;
-    border: 3px solid var(--border-color, #333);
-    border-top: 3px solid var(--primary-color, #3b82f6);
-    border-radius: 50%;
-    animation: app-spin 1s linear infinite;
   }
 
   p {
     margin: 0;
     font-size: 1rem;
     opacity: 0.8;
-  }
-
-  @keyframes app-spin {
-    0% {
-      transform: rotate(0deg);
-    }
-
-    100% {
-      transform: rotate(360deg);
-    }
   }
 }
 

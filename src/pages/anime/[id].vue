@@ -4,7 +4,7 @@
 
     <div v-if="error" class="error">
       <p>{{ error }}</p>
-      <button @click="retryAnimeDetails" class="retry-btn">Retry</button>
+      <Button class="retry-btn" size="lg" @click="retryAnimeDetails">Retry</Button>
     </div>
 
     <div v-else-if="anime" class="details-content">
@@ -26,7 +26,7 @@
     </div>
 
     <div v-else-if="isLoading || (!anime && !error)" class="loading">
-      <div class="loading-spinner"></div>
+      <Spinner class="anime-details__spinner" decorative size="lg" />
       <p>Loading anime details...</p>
     </div>
 
@@ -42,6 +42,8 @@ import AnimeBanner from '@/components/AnimeBanner.vue'
 import AnimeDescription from '@/components/AnimeDescription.vue'
 import AnimeMetadata from '@/components/AnimeMetadata.vue'
 import BackToListButton from '@/components/BackToListButton.vue'
+import Button from '@/components/ui/Button.vue'
+import Spinner from '@/components/ui/Spinner.vue'
 import { useAnimeStore } from '@/stores/anime'
 
 const route = useRoute()
@@ -133,24 +135,8 @@ watch(animeId, async (newId, oldId) => {
   min-height: 50vh;
   color: var(--text-muted);
 
-  .loading-spinner {
-    width: 40px;
-    height: 40px;
+  .anime-details__spinner {
     margin-bottom: 1rem;
-    border: 3px solid var(--border-color);
-    border-top: 3px solid var(--primary-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-
-    100% {
-      transform: rotate(360deg);
-    }
   }
 }
 
@@ -160,19 +146,8 @@ watch(animeId, async (newId, oldId) => {
   text-align: center;
 
   .retry-btn {
-    padding: 12px 24px;
     margin-top: 1rem;
-    font-size: 1rem;
-    color: white;
-    cursor: pointer;
-    background: var(--primary-color);
-    border: none;
     border-radius: 8px;
-    transition: background-color 0.2s ease;
-
-    &:hover {
-      background: color-mix(in srgb, var(--primary-color) 80%, black);
-    }
   }
 }
 

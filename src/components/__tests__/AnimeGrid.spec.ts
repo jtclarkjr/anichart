@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { TransitionGroup } from 'vue'
 import { describe, expect, it } from 'vitest'
-import AnimeCard from './AnimeCard.vue'
-import AnimeGrid from './AnimeGrid.vue'
+import AnimeCard from '../AnimeCard.vue'
+import AnimeGrid from '../AnimeGrid.vue'
 import { MediaType, type Media } from '@/utils/types/anilist'
 
 const createAnime = (id: number): Media => ({

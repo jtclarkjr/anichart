@@ -1,9 +1,10 @@
 <template>
   <Transition name="scroll-to-top">
-    <button
+    <Button
       v-if="isVisible"
-      type="button"
       class="scroll-to-top"
+      variant="surface"
+      size="icon"
       aria-label="Scroll to top"
       @click="scrollToTop"
     >
@@ -19,36 +20,15 @@
       >
         <path d="m18 15-6-6-6 6" />
       </svg>
-    </button>
+    </Button>
   </Transition>
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import Button from './ui/Button.vue'
+import { useScrollToTop } from '@/composables/useScrollToTop'
 
-const isVisible = ref(false)
-
-const updateVisibility = () => {
-  isVisible.value = window.scrollY >= window.innerHeight
-}
-
-const scrollToTop = () => {
-  const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-
-  window.scrollTo({
-    top: 0,
-    behavior: prefersReducedMotion ? 'auto' : 'smooth'
-  })
-}
-
-onMounted(() => {
-  updateVisibility()
-  window.addEventListener('scroll', updateVisibility, { passive: true })
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('scroll', updateVisibility)
-})
+const { isVisible, scrollToTop } = useScrollToTop()
 </script>
 
 <style scoped lang="scss">
@@ -57,36 +37,8 @@ onBeforeUnmount(() => {
   right: max(calc(1rem + env(safe-area-inset-right)), calc((100vw - 1200px) / 2 - 4rem));
   bottom: calc(1rem + env(safe-area-inset-bottom));
   z-index: 200;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 3rem;
-  height: 3rem;
-  padding: 0;
-  color: var(--text-primary);
-  cursor: pointer;
-  background: var(--surface-color);
-  background: color-mix(in srgb, var(--surface-color) 88%, transparent);
-  border: 1px solid var(--border-color);
-  border-radius: 50%;
-  box-shadow: 0 4px 16px rgb(0 0 0 / 35%);
-  backdrop-filter: blur(12px);
-  transition:
-    color 0.2s ease,
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.2s ease;
-
   &:hover {
-    color: white;
-    background: color-mix(in srgb, var(--surface-color) 78%, var(--primary-color));
-    border-color: var(--primary-color);
     transform: translateY(-2px);
-  }
-
-  &:focus-visible {
-    outline: 3px solid color-mix(in srgb, var(--primary-color) 65%, transparent);
-    outline-offset: 3px;
   }
 
   &:active {

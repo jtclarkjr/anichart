@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import AnimeCard from './AnimeCard.vue'
+import AnimeCard from '../AnimeCard.vue'
 import { MediaType, type Media, type MediaCoverImage } from '@/utils/types/anilist'
 
 const createAnime = (coverImage: MediaCoverImage): Media => ({

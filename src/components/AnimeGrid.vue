@@ -2,13 +2,13 @@
   <div class="anime-grid-container">
     <!-- Consistent rendering for SSR/CSR hydration -->
     <div v-if="shouldShowLoading" class="loading">
-      <div class="loading-spinner"></div>
+      <Spinner class="anime-grid__spinner" decorative size="lg" />
       <p>Loading anime...</p>
     </div>
 
     <div v-else-if="error" class="error">
       <p>{{ error }}</p>
-      <button @click="$emit('retry')" class="retry-btn">Retry</button>
+      <Button class="retry-btn" size="sm" @click="$emit('retry')">Retry</Button>
     </div>
 
     <div v-else-if="shouldShowEmpty" class="empty">
@@ -33,7 +33,7 @@
 
     <div v-if="hasMoreToShow" ref="loadTrigger" class="load-trigger">
       <div v-if="loadingMore" class="loading-more">
-        <div class="loading-spinner small"></div>
+        <Spinner decorative size="sm" />
         <p>Loading more anime...</p>
       </div>
       <div v-else class="showing-more">
@@ -46,6 +46,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import AnimeCard from './AnimeCard.vue'
+import Button from './ui/Button.vue'
+import Spinner from './ui/Spinner.vue'
+import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
 import type { Media } from '@/utils/types/anilist'
 
 interface Props {
@@ -65,13 +68,22 @@ interface Emits {
 }
 
 const props = defineProps<Props>()
-defineEmits<Emits>()
+const emit = defineEmits<Emits>()
 // Track if we're in SSR or post-hydration for consistent rendering
 const isHydrated = ref(false)
 
 // Load trigger ref for intersection observer
 const loadTrigger = ref<HTMLElement | null>(null)
 const batchStartIndex = ref(0)
+
+const canLoadMore = computed(() => props.hasMoreToShow && !props.loading && !props.loadingMore)
+
+useInfiniteScroll(loadTrigger, () => emit('loadMore'), {
+  enabled: canLoadMore,
+  rootMargin: '200px',
+  threshold: 0.1,
+  fallbackDistance: 200
+})
 
 const animeIds = computed(() => props.anime.map(({ id }) => id))
 
@@ -131,24 +143,8 @@ defineExpose({
   padding: 3rem;
   color: var(--text-muted);
 
-  .loading-spinner {
-    width: 40px;
-    height: 40px;
+  .anime-grid__spinner {
     margin-bottom: 1rem;
-    border: 3px solid var(--border-color);
-    border-top: 3px solid var(--primary-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-
-    100% {
-      transform: rotate(360deg);
-    }
   }
 }
 
@@ -158,18 +154,7 @@ defineExpose({
   text-align: center;
 
   .retry-btn {
-    padding: 8px 16px;
     margin-top: 1rem;
-    color: white;
-    cursor: pointer;
-    background: var(--primary-color);
-    border: none;
-    border-radius: 6px;
-    transition: background-color 0.2s ease;
-
-    &:hover {
-      background: color-mix(in srgb, var(--primary-color) 80%, black);
-    }
   }
 }
 
@@ -220,12 +205,6 @@ defineExpose({
   justify-content: center;
   padding: 1rem;
   color: var(--text-muted);
-
-  .loading-spinner.small {
-    width: 20px;
-    height: 20px;
-    border-width: 2px;
-  }
 }
 
 .showing-more {

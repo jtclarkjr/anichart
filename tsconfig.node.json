@@ -2,6 +2,7 @@
   "include": [
     "vite.config.*",
     "vitest.config.*",
+    "vitest.storybook.config.*",
     "cypress.config.*",
     "api/index.ts",
     "dev-unified.ts",

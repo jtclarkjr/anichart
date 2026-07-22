@@ -18,12 +18,16 @@ declare module 'vue' {
     AnimeGrid: typeof import('./src/components/AnimeGrid.vue')['default']
     AnimeMetadata: typeof import('./src/components/AnimeMetadata.vue')['default']
     BackToListButton: typeof import('./src/components/BackToListButton.vue')['default']
+    Button: typeof import('./src/components/ui/Button.vue')['default']
     ClientOnly: typeof import('./src/components/ClientOnly.vue')['default']
+    Input: typeof import('./src/components/ui/Input.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     RouteTransition: typeof import('./src/components/RouteTransition.vue')['default']
     ScrollToTop: typeof import('./src/components/ScrollToTop.vue')['default']
     SearchFilters: typeof import('./src/components/SearchFilters.vue')['default']
+    Select: typeof import('./src/components/ui/Select.vue')['default']
+    Spinner: typeof import('./src/components/ui/Spinner.vue')['default']
   }
 }
 
@@ -35,10 +39,14 @@ declare global {
   const AnimeGrid: typeof import('./src/components/AnimeGrid.vue')['default']
   const AnimeMetadata: typeof import('./src/components/AnimeMetadata.vue')['default']
   const BackToListButton: typeof import('./src/components/BackToListButton.vue')['default']
+  const Button: typeof import('./src/components/ui/Button.vue')['default']
   const ClientOnly: typeof import('./src/components/ClientOnly.vue')['default']
+  const Input: typeof import('./src/components/ui/Input.vue')['default']
   const RouterLink: typeof import('vue-router')['RouterLink']
   const RouterView: typeof import('vue-router')['RouterView']
   const RouteTransition: typeof import('./src/components/RouteTransition.vue')['default']
   const ScrollToTop: typeof import('./src/components/ScrollToTop.vue')['default']
   const SearchFilters: typeof import('./src/components/SearchFilters.vue')['default']
+  const Select: typeof import('./src/components/ui/Select.vue')['default']
+  const Spinner: typeof import('./src/components/ui/Spinner.vue')['default']
 }

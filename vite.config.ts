@@ -30,6 +30,7 @@ export const createAppConfig = (apiUrl: string | undefined, isSsrBuild = false) 
       ignorePatterns: [
         'dist',
         'dist-ssr',
+        'storybook-static',
         'coverage',
         'node_modules',
         'auto-imports.d.ts',
@@ -53,6 +54,7 @@ export const createAppConfig = (apiUrl: string | undefined, isSsrBuild = false) 
       sortPackageJson: false,
       ignorePatterns: [
         '*.md',
+        'storybook-static',
         'auto-imports.d.ts',
         'components.d.ts',
         'typed-router.d.ts',
