@@ -4,16 +4,15 @@ import Select from '../Select.vue'
 const meta = {
   title: 'UI/Select',
   component: Select,
-  args: { label: 'Sort anime', modelValue: 'popular' },
-  render: (args) => ({
-    components: { Select },
-    setup: () => ({ args }),
-    template: `<Select v-bind="args">
-      <option value="popular">Popular</option>
-      <option value="trending">Trending</option>
-      <option value="score">Top rated</option>
-    </Select>`
-  })
+  args: {
+    label: 'Sort anime',
+    modelValue: 'popular',
+    options: [
+      { value: 'popular', label: 'Popular' },
+      { value: 'trending', label: 'Trending' },
+      { value: 'score', label: 'Top rated' }
+    ]
+  }
 } satisfies Meta<typeof Select>
 
 export default meta

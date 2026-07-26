@@ -5,23 +5,25 @@
         v-model="searchModel"
         type="search"
         placeholder="Search anime..."
+        aria-label="Search anime"
         clearable
         clear-label="Clear search"
         @clear="handleSearchClear"
       />
     </div>
     <div class="filters">
-      <Select v-model="sortModel" aria-label="Sort anime" @change="handleFilterChange">
-        <option :value="MediaSort.POPULARITY_DESC">Popular</option>
-        <option :value="MediaSort.TRENDING_DESC">Trending</option>
-        <option :value="MediaSort.SCORE_DESC">Top Rated</option>
-        <option :value="MediaSort.START_DATE_DESC">Recently Released</option>
-      </Select>
-      <Select v-model="seasonModel" aria-label="Filter by season" @change="handleFilterChange">
-        <option v-for="season in availableSeasons" :key="season.value" :value="season.value">
-          {{ season.label }}
-        </option>
-      </Select>
+      <Select
+        v-model="sortModel"
+        :options="sortOptions"
+        aria-label="Sort anime"
+        @update:model-value="handleFilterChange"
+      />
+      <Select
+        v-model="seasonModel"
+        :options="availableSeasons"
+        aria-label="Filter by season"
+        @update:model-value="handleFilterChange"
+      />
     </div>
   </div>
 </template>
@@ -30,6 +32,7 @@
 import { AnimeApi } from '@/utils/api/anime.api'
 import Input from '@/components/ui/Input.vue'
 import Select from '@/components/ui/Select.vue'
+import type { SelectOption } from '@/components/ui/types'
 import { MediaSort } from '@/utils/types/anilist'
 import type { MediaSeason } from '@/utils/types/anilist'
 
@@ -65,8 +68,15 @@ const searchModel = computed({
   set: (value: string) => emit('update:searchQuery', value)
 })
 
+const sortOptions: SelectOption<MediaSort>[] = [
+  { value: MediaSort.POPULARITY_DESC, label: 'Popular' },
+  { value: MediaSort.TRENDING_DESC, label: 'Trending' },
+  { value: MediaSort.SCORE_DESC, label: 'Top Rated' },
+  { value: MediaSort.START_DATE_DESC, label: 'Recently Released' }
+]
+
 // Available seasons based on current time of year
-const availableSeasons = computed(() => {
+const availableSeasons = computed<SelectOption<MediaSeason>[]>(() => {
   const { season: currentSeason, year } = AnimeApi.getCurrentSeason()
   const seasons = []
 

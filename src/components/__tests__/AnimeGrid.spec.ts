@@ -77,4 +77,19 @@ describe('AnimeGrid', () => {
     expect(getCardStyle(wrapper, 7)).toContain('--card-delay: 200ms')
     expect(getCardStyle(wrapper, 13)).toContain('--card-delay: 400ms')
   })
+
+  it('disables infinite loading while showing a request error', () => {
+    const wrapper = mount(AnimeGrid, {
+      props: {
+        ...createProps([]),
+        error: 'Failed to load anime data. Please try again.',
+        hasMoreToShow: true,
+        totalCount: 50
+      }
+    })
+
+    expect(wrapper.get('.error').text()).toContain('Failed to load anime data')
+    expect(wrapper.find('.load-trigger').exists()).toBe(false)
+    expect(wrapper.emitted('loadMore')).toBeUndefined()
+  })
 })

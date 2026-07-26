@@ -264,6 +264,7 @@ export const useAnimeStore = defineStore('anime', {
         }
       } catch (error) {
         this.error = 'Failed to load anime data. Please try again.'
+        this.hasNextPage = false
         console.error('Error loading anime data:', error)
         // Restore previous data on error if we had some
         if (resetData && previousAnime.length === 0) {
@@ -285,7 +286,7 @@ export const useAnimeStore = defineStore('anime', {
 
     // Load next page of data
     async loadMoreData() {
-      if (this.loading || this.loadingMore || !this.hasNextPage) return
+      if (this.loading || this.loadingMore || !this.hasNextPage || this.error) return
 
       this.currentPage++
       await this.loadAnime(false)

@@ -5,6 +5,7 @@ import App from './App.vue'
 import pages from '@/pages'
 import type { AppSSRContext, SSRRenderResult } from '@/types/ssr'
 // Import styles for SSR
+import '@jtclarkjr/component-library-vue/style.css'
 import '@/assets/styles/anime.scss'
 
 export async function render(url: string, renderContext?: AppSSRContext): Promise<SSRRenderResult> {

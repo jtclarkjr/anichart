@@ -8,7 +8,6 @@
           v-model:selectedSort="selectedSort"
           v-model:selectedSeason="selectedSeason"
           @filterChange="handleFilterChange"
-          @update:searchQuery="handleSearch"
         />
       </div>
     </div>
@@ -55,10 +54,20 @@ const goToDetails = async (id: number) => {
   await router.push(`/anime/${id}`)
 }
 
-// Reactive refs for two-way binding
+// Keep the field responsive while batching API searches.
+const loadSearchResults = debounce(() => {
+  void animeStore.loadAnime(true)
+  if (typeof window !== 'undefined') {
+    window.scrollTo(0, 0)
+  }
+}, 300)
+
 const searchQuery = computed({
   get: () => animeStore.searchQuery,
-  set: (value: string) => animeStore.setSearchQuery(value)
+  set: (value: string) => {
+    animeStore.searchQuery = value
+    loadSearchResults()
+  }
 })
 
 const selectedSort = computed({
@@ -79,13 +88,6 @@ const handleFilterChange = () => {
     window.scrollTo(0, 0)
   }
 }
-
-const handleSearch = debounce(() => {
-  // Search is handled automatically through store
-  if (typeof window !== 'undefined') {
-    window.scrollTo(0, 0)
-  }
-}, 300)
 
 // SSR Prefetch - runs on server during SSR
 onServerPrefetch(async () => {
