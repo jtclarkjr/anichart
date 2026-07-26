@@ -14,6 +14,25 @@
   --success-color: #48bb78;
   --warning-color: #ed8936;
   --error-color: #f56565;
+  --bg-primary: var(--background-color);
+  --bg-secondary: var(--surface-color);
+  --text-color: var(--text-primary);
+  --clv-color-bg: var(--background-color);
+  --clv-color-surface: var(--surface-color);
+  --clv-color-surface-raised: var(--card-hover);
+  --clv-color-border: var(--border-color);
+  --clv-color-text: var(--text-primary);
+  --clv-color-text-muted: var(--text-muted);
+  --clv-color-primary: var(--primary-color);
+  --clv-color-on-primary: #06231b;
+  --clv-color-primary-hover: #2c9bd9;
+  --clv-color-primary-strong: #2c9bd9;
+  --clv-color-danger: var(--error-color);
+  --clv-color-success: var(--success-color);
+  --clv-color-warning: var(--warning-color);
+  --clv-color-focus: color-mix(in srgb, var(--primary-color) 35%, transparent);
+  --clv-radius-sm: 6px;
+  --clv-font-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 // Base styles
@@ -34,6 +53,51 @@ body {
   margin: 0;
   padding: 0;
   line-height: 1.6;
+}
+
+// Select content is teleported outside the library component's scoped style boundary.
+.clv-select-content {
+  z-index: 1100;
+  min-width: var(--reka-select-trigger-width);
+  max-height: min(20rem, var(--reka-select-content-available-height));
+  overflow: hidden;
+  font-family: var(--clv-font-sans);
+  color: var(--clv-color-text);
+  background: var(--clv-color-surface-raised);
+  border: 1px solid var(--clv-color-border);
+  border-radius: var(--clv-radius-md);
+  box-shadow: var(--clv-shadow-md);
+}
+
+.clv-select-content__viewport {
+  padding: var(--clv-space-1);
+}
+
+.clv-select-content__item {
+  position: relative;
+  display: flex;
+  min-height: 2.25rem;
+  align-items: center;
+  padding: 0.5rem 2rem 0.5rem 0.7rem;
+  color: var(--clv-color-text);
+  cursor: pointer;
+  border-radius: var(--clv-radius-sm);
+  outline: none;
+
+  &[data-highlighted] {
+    background: rgb(255 255 255 / 8%);
+  }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+}
+
+.clv-select-content__indicator {
+  position: absolute;
+  right: 0.65rem;
+  color: var(--clv-color-primary);
 }
 
 .container {

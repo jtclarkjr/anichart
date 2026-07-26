@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import SearchFilters from '../search/SearchFilters.vue'
+import Select from '../ui/Select.vue'
 import { MediaSeason, MediaSort } from '@/utils/types/anilist'
 
 const createProps = (searchQuery: string) => ({
@@ -26,6 +27,17 @@ describe('SearchFilters', () => {
     await wrapper.get('button[aria-label="Clear search"]').trigger('click')
 
     expect(wrapper.emitted('update:searchQuery')).toEqual([['']])
+    expect(wrapper.emitted('filterChange')).toEqual([[]])
+  })
+
+  it('updates a package-backed select and signals a filter change once', async () => {
+    const wrapper = mount(SearchFilters, { props: createProps('') })
+    const [sortSelect] = wrapper.findAllComponents(Select)
+
+    sortSelect?.vm.$emit('update:modelValue', MediaSort.SCORE_DESC)
+    await nextTick()
+
+    expect(wrapper.emitted('update:selectedSort')).toEqual([[MediaSort.SCORE_DESC]])
     expect(wrapper.emitted('filterChange')).toEqual([[]])
   })
 })

@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import { inject } from '@vercel/analytics'
 import App from './App.vue'
 import pages from '@/pages'
+import '@jtclarkjr/component-library-vue/style.css'
 import '@/assets/styles/anime.scss'
 
 const app = createApp(App)

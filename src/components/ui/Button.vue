@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Spinner from './Spinner.vue'
+import { Button } from '@jtclarkjr/component-library-vue'
 import type { ButtonAs, ButtonSize, ButtonVariant } from './types'
 
 interface Props {
@@ -22,30 +22,33 @@ const props = withDefaults(defineProps<Props>(), {
 
 const isNativeButton = computed(() => props.as === 'button')
 const isUnavailable = computed(() => props.disabled || props.loading)
+const libraryVariant = computed(() => (props.variant === 'surface' ? 'secondary' : props.variant))
+const librarySize = computed(() => (props.size === 'icon' ? 'md' : props.size))
+
+const emit = defineEmits<{
+  click: [event: MouseEvent]
+}>()
 
 const handleClick = (event: MouseEvent) => {
-  if (!isUnavailable.value) return
-
-  event.preventDefault()
-  event.stopImmediatePropagation()
+  emit('click', event)
 }
 </script>
 
 <template>
-  <component
-    :is="as"
+  <Button
+    :as="props.as"
     class="ui-button"
     :class="[`ui-button--${variant}`, `ui-button--${size}`]"
-    :type="isNativeButton ? type : undefined"
-    :disabled="isNativeButton ? isUnavailable : undefined"
-    :aria-disabled="!isNativeButton && isUnavailable ? 'true' : undefined"
-    :aria-busy="loading || undefined"
+    :variant="libraryVariant"
+    :size="librarySize"
+    :type="props.type"
+    :disabled="props.disabled"
+    :loading="props.loading"
     :tabindex="!isNativeButton && isUnavailable ? -1 : undefined"
     @click="handleClick"
   >
-    <Spinner v-if="loading" decorative size="sm" />
     <slot />
-  </component>
+  </Button>
 </template>
 
 <style scoped lang="scss">

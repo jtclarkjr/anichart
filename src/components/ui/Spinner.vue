@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Spinner } from '@jtclarkjr/component-library-vue'
 import type { SpinnerSize } from './types'
 
 interface Props {
@@ -12,15 +13,17 @@ const props = withDefaults(defineProps<Props>(), {
   size: 'md',
   decorative: false
 })
+
+const librarySize = computed(() => (props.size === 'xl' ? 'lg' : props.size))
 </script>
 
 <template>
-  <span
+  <Spinner
     class="ui-spinner"
     :class="`ui-spinner--${size}`"
-    :role="decorative ? undefined : 'status'"
-    :aria-label="decorative ? undefined : props.label"
-    :aria-hidden="decorative ? 'true' : undefined"
+    :label="props.label"
+    :size="librarySize"
+    :decorative="props.decorative"
   />
 </template>
 

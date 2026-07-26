@@ -6,3 +6,10 @@ export type ButtonSize = 'sm' | 'md' | 'lg' | 'icon'
 export type SpinnerSize = 'sm' | 'md' | 'lg' | 'xl'
 export type InputType = 'text' | 'email' | 'password' | 'search' | 'url'
 export type SelectValue = string | number
+
+export interface SelectOption<T extends SelectValue = SelectValue> {
+  value: T
+  label: string
+  description?: string
+  disabled?: boolean
+}
