@@ -31,7 +31,7 @@
       />
     </TransitionGroup>
 
-    <div v-if="hasMoreToShow" ref="loadTrigger" class="load-trigger">
+    <div v-if="hasMoreToShow && !error" ref="loadTrigger" class="load-trigger">
       <div v-if="loadingMore" class="loading-more">
         <Spinner decorative size="sm" />
         <p>Loading more anime...</p>
@@ -76,7 +76,9 @@ const isHydrated = ref(false)
 const loadTrigger = ref<HTMLElement | null>(null)
 const batchStartIndex = ref(0)
 
-const canLoadMore = computed(() => props.hasMoreToShow && !props.loading && !props.loadingMore)
+const canLoadMore = computed(
+  () => props.hasMoreToShow && !props.loading && !props.loadingMore && !props.error
+)
 
 useInfiniteScroll(loadTrigger, () => emit('loadMore'), {
   enabled: canLoadMore,

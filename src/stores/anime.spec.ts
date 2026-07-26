@@ -1,12 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
 import { useAnimeStore } from './anime'
-import { getAnimeDetails } from '@/utils/api/anime.api'
+import { getAnimeDetails, getAnimeList } from '@/utils/api/anime.api'
 import { MediaType, type Media } from '@/utils/types/anilist'
 
 vi.mock('@/utils/api/anime.api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/utils/api/anime.api')>()),
-  getAnimeDetails: vi.fn()
+  getAnimeDetails: vi.fn(),
+  getAnimeList: vi.fn()
 }))
 
 const createAnime = (id: number): Media => ({
@@ -39,11 +40,13 @@ const createAnime = (id: number): Media => ({
 })
 
 const mockedGetAnimeDetails = vi.mocked(getAnimeDetails)
+const mockedGetAnimeList = vi.mocked(getAnimeList)
 
 describe('anime detail cache', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     mockedGetAnimeDetails.mockReset()
+    mockedGetAnimeList.mockReset()
   })
 
   it('returns an existing detail record without querying AniList', async () => {
@@ -75,5 +78,24 @@ describe('anime detail cache', () => {
 
     store.invalidateAnimeDetails(anime.id)
     expect(store.animeDetailsById[anime.id]).toBeUndefined()
+  })
+
+  it('stops pagination after an API failure instead of retrying automatically', async () => {
+    const store = useAnimeStore()
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    mockedGetAnimeList.mockRejectedValueOnce(new Error('Rate limited'))
+    store.currentAnime = [createAnime(4)]
+    store.currentPage = 2
+
+    await store.loadAnime(false)
+
+    expect(store.error).toBe('Failed to load anime data. Please try again.')
+    expect(store.hasNextPage).toBe(false)
+
+    await store.loadMoreData()
+
+    expect(mockedGetAnimeList).toHaveBeenCalledTimes(1)
+    expect(store.currentPage).toBe(2)
+    consoleError.mockRestore()
   })
 })
