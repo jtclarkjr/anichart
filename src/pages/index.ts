@@ -1,18 +1,24 @@
-import { createRouter, createWebHistory, createMemoryHistory } from 'vue-router'
-
+import {
+  createMemoryHistory,
+  createRouter,
+  createWebHistory,
+  type RouteRecordRaw
+} from 'vue-router'
+import { createAnimeDetailRouteProps } from './anime/route'
 // Manual route definitions for now to fix SSR
 const routes = [
   {
     path: '/anime',
-    name: 'anime-index',
+    name: '/anime/',
     component: () => import('../pages/anime/index.vue')
   },
   {
     path: '/anime/:id',
-    name: 'anime-id',
-    component: () => import('../pages/anime/[id].vue')
+    name: '/anime/[id]',
+    component: () => import('../pages/anime/[id].vue'),
+    props: ({ params }) => createAnimeDetailRouteProps(params)
   }
-]
+] satisfies RouteRecordRaw[]
 
 const pages = createRouter({
   history:

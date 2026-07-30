@@ -3,6 +3,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { describe, expect, it, vi } from 'vitest'
 import AnimeDetails from './[id].vue'
+import { createAnimeDetailRouteProps } from './route'
 import { useAnimeStore } from '@/stores/anime'
 import { MediaType, type Media } from '@/utils/types/anilist'
 
@@ -40,7 +41,11 @@ const createTestRouter = () =>
     history: createMemoryHistory(),
     routes: [
       { path: '/anime', component: { template: '<div>Anime list</div>' } },
-      { path: '/anime/:id', component: { template: '<div>Anime details</div>' } }
+      {
+        path: '/anime/:id',
+        component: AnimeDetails,
+        props: ({ params }) => createAnimeDetailRouteProps(params)
+      }
     ]
   })
 
@@ -52,6 +57,8 @@ const stubs = {
   AnimeDescription: true,
   AnimeMetadata: true
 }
+
+const RouterViewHost = { template: '<RouterView />' }
 
 describe('Anime details navigation', () => {
   it('renders SSR-hydrated details without loading again on mount', async () => {
@@ -69,7 +76,7 @@ describe('Anime details navigation', () => {
     await router.push('/anime/1')
     await router.isReady()
 
-    const wrapper = mount(AnimeDetails, { global: { plugins: [pinia, router], stubs } })
+    const wrapper = mount(RouterViewHost, { global: { plugins: [pinia, router], stubs } })
     await flushPromises()
 
     expect(wrapper.get('[data-test="anime-title"]').text()).toBe('Anime 1')
@@ -96,7 +103,7 @@ describe('Anime details navigation', () => {
     await router.push('/anime/1')
     await router.isReady()
 
-    const wrapper = mount(AnimeDetails, { global: { plugins: [pinia, router], stubs } })
+    const wrapper = mount(RouterViewHost, { global: { plugins: [pinia, router], stubs } })
     await flushPromises()
 
     await router.push('/anime/2')
@@ -122,7 +129,7 @@ describe('Anime details navigation', () => {
     await router.push('/anime/1')
     await router.isReady()
 
-    const wrapper = mount(AnimeDetails, { global: { plugins: [pinia, router], stubs } })
+    const wrapper = mount(RouterViewHost, { global: { plugins: [pinia, router], stubs } })
     await wrapper.vm.$nextTick()
 
     const listLink = wrapper.get('a.back-to-list')

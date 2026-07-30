@@ -45,28 +45,22 @@ import BackToListButton from '@/components/navigation/BackToListButton.vue'
 import Button from '@/components/ui/Button.vue'
 import Spinner from '@/components/ui/Spinner.vue'
 import { useAnimeStore } from '@/stores/anime'
+import type { AnimeDetailRouteProps } from './route'
 
-const route = useRoute()
+const props = defineProps<AnimeDetailRouteProps>()
 const animeStore = useAnimeStore()
 
-const animeId = computed(() => {
-  const id = (route.params as { id?: string }).id
-  if (!id || typeof id !== 'string') {
-    return null
-  }
-
-  const parsedId = Number.parseInt(id, 10)
-  return Number.isNaN(parsedId) ? null : parsedId
+const anime = computed(() => {
+  const id = props.animeId
+  return id === null ? undefined : animeStore.animeDetailsById[id]
 })
-
-const anime = computed(() =>
-  animeId.value === null ? undefined : animeStore.animeDetailsById[animeId.value]
-)
 const error = ref<string | null>(null)
 const isLoading = ref(false)
 
 const loadAnimeDetails = async (): Promise<void> => {
-  if (animeId.value === null) {
+  const id = props.animeId
+
+  if (!id) {
     error.value = 'Invalid anime ID'
     return
   }
@@ -75,7 +69,7 @@ const loadAnimeDetails = async (): Promise<void> => {
   error.value = null
 
   try {
-    await animeStore.loadAnimeDetails(animeId.value)
+    await animeStore.loadAnimeDetails(id)
   } catch (err) {
     error.value = 'Failed to load anime details. Please try again.'
     console.error('Error loading anime details:', err)
@@ -85,8 +79,10 @@ const loadAnimeDetails = async (): Promise<void> => {
 }
 
 const retryAnimeDetails = async () => {
-  if (animeId.value !== null) {
-    animeStore.invalidateAnimeDetails(animeId.value)
+  const id = props.animeId
+
+  if (id !== null) {
+    animeStore.invalidateAnimeDetails(id)
   }
 
   await loadAnimeDetails()
@@ -106,14 +102,17 @@ onMounted(async () => {
   }
 })
 
-watch(animeId, async (newId, oldId) => {
-  if (newId !== oldId) {
-    error.value = null
-    if (newId !== null && !animeStore.animeDetailsById[newId]) {
-      await loadAnimeDetails()
+watch(
+  () => props.animeId,
+  async (newId, oldId) => {
+    if (newId !== oldId) {
+      error.value = null
+      if (newId !== null && !animeStore.animeDetailsById[newId]) {
+        await loadAnimeDetails()
+      }
     }
   }
-})
+)
 </script>
 
 <style scoped lang="scss">
