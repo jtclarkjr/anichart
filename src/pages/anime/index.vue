@@ -98,7 +98,7 @@ onServerPrefetch(async () => {
 // Initialize on client
 onMounted(async () => {
   // Load anime data if not already loaded (client-side fallback)
-  if (animeStore.currentAnime.length === 0) {
+  if (!animeStore.currentAnime.length) {
     await animeStore.loadInitialData()
   }
 })
