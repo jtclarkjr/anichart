@@ -38,12 +38,11 @@
 </template>
 
 <script setup lang="ts">
+import { Button, Spinner } from '@jtclarkjr/component-library-vue'
 import AnimeBanner from '@/components/anime/AnimeBanner.vue'
 import AnimeDescription from '@/components/anime/AnimeDescription.vue'
 import AnimeMetadata from '@/components/anime/AnimeMetadata.vue'
 import BackToListButton from '@/components/navigation/BackToListButton.vue'
-import Button from '@/components/ui/Button.vue'
-import Spinner from '@/components/ui/Spinner.vue'
 import { useAnimeStore } from '@/stores/anime'
 import type { AnimeDetailRouteProps } from './route'
 

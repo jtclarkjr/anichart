@@ -6,7 +6,7 @@
       "name": "anichart",
       "dependencies": {
         "@apollo/client": "^4.2.7",
-        "@jtclarkjr/component-library-vue": "0.2.1",
+        "@jtclarkjr/component-library-vue": "0.3.0",
         "@vercel/analytics": "^2.0.1",
         "graphql": "^17.0.2",
         "pinia": "^3.0.4",
@@ -265,7 +265,7 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
-    "@jtclarkjr/component-library-vue": ["@jtclarkjr/component-library-vue@0.2.1", "", { "dependencies": { "@internationalized/date": "^3.12.2", "reka-ui": "^2.10.1" }, "peerDependencies": { "vue": "^3.5.0" } }, "sha512-ylYsXs8Mfs6YcdajrdQjnyaTyKLUc1XkfWYE81SDf5errlGT+Sgmd1+DkUhEhXN/AyXd7DLf48w/ap8yCWANnA=="],
+    "@jtclarkjr/component-library-vue": ["@jtclarkjr/component-library-vue@0.3.0", "", { "dependencies": { "@internationalized/date": "^3.12.2", "reka-ui": "^2.10.1" }, "peerDependencies": { "vue": "^3.5.0" } }, "sha512-EAYvjTdi1FZ+hS4cwV0UHUiNri6RBRM49Kh5y78xCBfIKF1KNVTwk+VGQTOk7yUVhfsoodDO/hDLB5s/ZUtVgw=="],
 
     "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@1.1.6", "", { "dependencies": { "@tybys/wasm-util": "^0.10.3" }, "peerDependencies": { "@emnapi/core": "^1.7.1", "@emnapi/runtime": "^1.7.1" } }, "sha512-ZLv/JdUfkvOy9eCnnBaGfiO+XimbjebAeO+MRQqD/B+FR1tnRN0tpKSJHRbE8sFfS6aqsXZ67TQjfwfsxULVbg=="],
 

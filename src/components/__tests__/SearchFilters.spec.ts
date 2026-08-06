@@ -1,8 +1,13 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { Select } from '@jtclarkjr/component-library-vue'
+import type { ConcreteComponent } from 'vue'
 import SearchFilters from '../search/SearchFilters.vue'
-import Select from '../ui/Select.vue'
 import { MediaSeason, MediaSort } from '@/utils/types/anilist'
+
+// Vue Test Utils cannot currently instantiate the package's generic Select SFC type.
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion
+const ConcreteSelect = Select as unknown as ConcreteComponent
 
 const createProps = (searchQuery: string) => ({
   searchQuery,
@@ -32,7 +37,7 @@ describe('SearchFilters', () => {
 
   it('updates a package-backed select and signals a filter change once', async () => {
     const wrapper = mount(SearchFilters, { props: createProps('') })
-    const [sortSelect] = wrapper.findAllComponents(Select)
+    const [sortSelect] = wrapper.findAllComponents(ConcreteSelect)
 
     sortSelect?.vm.$emit('update:modelValue', MediaSort.SCORE_DESC)
     await nextTick()

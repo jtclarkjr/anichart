@@ -24,8 +24,8 @@
 </template>
 
 <script setup lang="ts">
+import { Button } from '@jtclarkjr/component-library-vue'
 import { RouterLink } from 'vue-router'
-import Button from '../ui/Button.vue'
 </script>
 
 <style scoped lang="scss">

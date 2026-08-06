@@ -1,97 +1,154 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { Button, Input, Select, Spinner } from '@jtclarkjr/component-library-vue'
-import UiButton from '../ui/Button.vue'
-import UiInput from '../ui/Input.vue'
-import UiSelect from '../ui/Select.vue'
-import UiSpinner from '../ui/Spinner.vue'
+import type {
+  ButtonSize,
+  ButtonVariant,
+  ChoiceOption,
+  InputParts,
+  InputType,
+  SpinnerSize
+} from '@jtclarkjr/component-library-vue'
 
-describe('UI primitives', () => {
-  it('renders button variants and loading semantics', () => {
-    const wrapper = mount(UiButton, {
-      props: { loading: true, variant: 'surface', size: 'lg' },
-      slots: { default: 'Save' }
+type SortValue = 'popular' | 'score'
+
+const selectOptions = [
+  { value: 'popular', label: 'Popular' },
+  { value: 'score', label: 'Score' }
+] satisfies ChoiceOption<SortValue>[]
+
+describe('component-library consumer contracts', () => {
+  it('renders native button variants, sizes, loading state, and loader slots', () => {
+    const variant: ButtonVariant = 'surface'
+    const size: ButtonSize = 'icon'
+    const wrapper = mount(Button, {
+      props: { loading: true, variant, size },
+      slots: {
+        default: 'Save',
+        loader: '<span data-testid="loader">Saving</span>'
+      }
     })
 
+    expect(wrapper.element.tagName).toBe('BUTTON')
     expect(wrapper.classes()).toEqual(
-      expect.arrayContaining(['ui-button--surface', 'ui-button--lg'])
+      expect.arrayContaining(['clv-button', 'clv-button--surface', 'clv-button--icon'])
     )
-    expect(wrapper.attributes('aria-busy')).toBe('true')
-    expect(wrapper.attributes()).toHaveProperty('disabled')
-    expect(wrapper.text()).toContain('Save')
-    expect(wrapper.findComponent(Button).props()).toMatchObject({
-      variant: 'secondary',
-      size: 'lg'
+    expect(wrapper.attributes()).toMatchObject({
+      'aria-busy': 'true',
+      'data-clv-component': 'button',
+      'data-loading': '',
+      'data-part': 'root',
+      'data-size': 'icon',
+      'data-variant': 'surface'
     })
+    expect(wrapper.attributes()).toHaveProperty('disabled')
+    expect(wrapper.get('[data-testid="loader"]').text()).toBe('Saving')
+    expect(wrapper.text()).toContain('Save')
   })
 
-  it('supports disabled polymorphic buttons without firing clicks', async () => {
+  it('blocks activation for unavailable polymorphic buttons', async () => {
     const onClick = vi.fn()
-    const wrapper = mount(UiButton, {
+    const wrapper = mount(Button, {
       props: { as: 'a', disabled: true },
       attrs: { href: '/anime', onClick },
       slots: { default: 'Anime' }
     })
 
     expect(wrapper.element.tagName).toBe('A')
-    expect(wrapper.attributes('aria-disabled')).toBe('true')
-    expect(wrapper.attributes('tabindex')).toBe('-1')
+    expect(wrapper.attributes()).toMatchObject({
+      'aria-disabled': 'true',
+      tabindex: '-1'
+    })
 
     await wrapper.trigger('click')
     expect(onClick).not.toHaveBeenCalled()
   })
 
-  it('connects input labels and errors while supporting clearable models', async () => {
-    const wrapper = mount(UiInput, {
+  it('forwards native input attributes through parts and clears models before clear events', async () => {
+    const eventOrder: string[] = []
+    const type: InputType = 'search'
+    const parts = {
+      input: {
+        autocomplete: 'off',
+        'data-testid': 'native-input'
+      }
+    } satisfies InputParts
+    const wrapper = mount(Input, {
       props: {
         label: 'Search',
         error: 'Required',
         clearable: true,
-        modelValue: 'Cowboy Bebop'
+        modelValue: 'Cowboy Bebop',
+        type,
+        parts,
+        'onUpdate:modelValue': (value: string) => eventOrder.push(`model:${value}`),
+        onClear: () => eventOrder.push('clear')
       },
       slots: { leading: '<span data-leading>⌕</span>' }
     })
     const input = wrapper.get('input')
 
+    expect(wrapper.attributes()).toMatchObject({
+      'data-clv-component': 'input',
+      'data-part': 'root'
+    })
     expect(wrapper.get('label').attributes('for')).toBe(input.attributes('id'))
-    expect(input.attributes('aria-invalid')).toBe('true')
+    expect(input.attributes()).toMatchObject({
+      'aria-invalid': 'true',
+      autocomplete: 'off',
+      'data-part': 'input',
+      'data-testid': 'native-input',
+      type: 'search'
+    })
     expect(wrapper.find('[data-leading]').exists()).toBe(true)
-    expect(wrapper.findComponent(Input).exists()).toBe(true)
 
     await wrapper.get('button[aria-label="Clear input"]').trigger('click')
+
     expect(wrapper.emitted('update:modelValue')).toEqual([['']])
     expect(wrapper.emitted('clear')).toEqual([[]])
+    expect(eventOrder).toEqual(['model:', 'clear'])
   })
 
-  it('renders typed select options and updates its model', async () => {
-    const wrapper = mount(UiSelect, {
+  it('keeps typed select options coupled to the model value', async () => {
+    const wrapper = mount(Select, {
       props: {
         label: 'Sort',
-        modelValue: 'popular',
-        options: [
-          { value: 'popular', label: 'Popular' },
-          { value: 'score', label: 'Score' }
-        ]
+        modelValue: 'popular' as SortValue,
+        options: selectOptions,
+        parts: { control: { 'data-testid': 'select-control' } }
       }
     })
 
-    wrapper.findComponent(Select).vm.$emit('update:modelValue', 'score')
-    await nextTick()
+    expect(wrapper.attributes()).toMatchObject({
+      'data-clv-component': 'select',
+      'data-part': 'root'
+    })
+    expect(wrapper.get('[role="combobox"]').attributes()).toMatchObject({
+      'data-part': 'control',
+      'data-testid': 'select-control'
+    })
+    expect(wrapper.get('[role="combobox"]').text()).toContain('Popular')
 
-    expect(wrapper.findComponent(Select).props('options')).toHaveLength(2)
-    expect(wrapper.emitted('update:modelValue')).toEqual([['score']])
+    await wrapper.setProps({ modelValue: 'score' satisfies SortValue })
+
+    expect(wrapper.get('[role="combobox"]').text()).toContain('Score')
+    expect(wrapper.props('options')).toEqual(selectOptions)
   })
 
-  it('switches spinner accessibility semantics for decorative use', () => {
-    const labelled = mount(UiSpinner, { props: { label: 'Loading results', size: 'lg' } })
-    const decorative = mount(UiSpinner, { props: { decorative: true } })
+  it('supports xl and decorative spinner accessibility semantics', () => {
+    const size: SpinnerSize = 'xl'
+    const labelled = mount(Spinner, { props: { label: 'Loading results', size } })
+    const decorative = mount(Spinner, { props: { decorative: true } })
 
+    expect(labelled.classes()).toEqual(expect.arrayContaining(['clv-spinner', 'clv-spinner--xl']))
     expect(labelled.attributes()).toMatchObject({
       role: 'status',
-      'aria-label': 'Loading results'
+      'aria-label': 'Loading results',
+      'data-clv-component': 'spinner',
+      'data-part': 'root',
+      'data-size': 'xl'
     })
     expect(decorative.attributes('aria-hidden')).toBe('true')
     expect(decorative.attributes('role')).toBeUndefined()
-    expect(labelled.findComponent(Spinner).props('size')).toBe('lg')
   })
 })

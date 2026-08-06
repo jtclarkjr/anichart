@@ -29,10 +29,9 @@
 </template>
 
 <script setup lang="ts">
+import { Input, Select } from '@jtclarkjr/component-library-vue'
+import type { ChoiceOption } from '@jtclarkjr/component-library-vue'
 import { AnimeApi } from '@/utils/api/anime.api'
-import Input from '@/components/ui/Input.vue'
-import Select from '@/components/ui/Select.vue'
-import type { SelectOption } from '@/components/ui/types'
 import { MediaSort } from '@/utils/types/anilist'
 import type { MediaSeason } from '@/utils/types/anilist'
 
@@ -68,7 +67,7 @@ const searchModel = computed({
   set: (value: string) => emit('update:searchQuery', value)
 })
 
-const sortOptions: SelectOption<MediaSort>[] = [
+const sortOptions: ChoiceOption<MediaSort>[] = [
   { value: MediaSort.POPULARITY_DESC, label: 'Popular' },
   { value: MediaSort.TRENDING_DESC, label: 'Trending' },
   { value: MediaSort.SCORE_DESC, label: 'Top Rated' },
@@ -76,7 +75,7 @@ const sortOptions: SelectOption<MediaSort>[] = [
 ]
 
 // Available seasons based on current time of year
-const availableSeasons = computed<SelectOption<MediaSeason>[]>(() => {
+const availableSeasons = computed<ChoiceOption<MediaSeason>[]>(() => {
   const { season: currentSeason, year } = AnimeApi.getCurrentSeason()
   const seasons = []
 
