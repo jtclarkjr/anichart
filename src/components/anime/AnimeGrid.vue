@@ -151,7 +151,7 @@ defineExpose({
 
 .error {
   padding: 2rem;
-  color: #ff6b6b;
+  color: var(--error-color);
   text-align: center;
 
   .retry-btn {

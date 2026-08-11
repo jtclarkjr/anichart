@@ -140,7 +140,7 @@ watch(
 
 .error {
   padding: 3rem;
-  color: #ff6b6b;
+  color: var(--error-color);
   text-align: center;
 
   .retry-btn {

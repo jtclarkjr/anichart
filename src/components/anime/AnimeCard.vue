@@ -143,7 +143,7 @@ const formatYear = AnimeApi.formatYear
   padding: 4px 8px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: white;
+  color: var(--clv-color-on-primary);
   background: var(--primary-color);
   border-radius: 12px;
 }
@@ -189,8 +189,8 @@ const formatYear = AnimeApi.formatYear
   padding: 2px 6px;
   font-size: 0.7rem;
   font-weight: 500;
-  color: var(--text-color);
-  background: var(--accent-color);
+  color: #fff;
+  background: var(--clv-color-danger);
   border-radius: 4px;
 }
 

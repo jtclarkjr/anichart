@@ -23,6 +23,7 @@ export const createAppConfig = (apiUrl: string | undefined, isSsrBuild = false) 
         suspicious: 'warn'
       },
       rules: {
+        'no-nested-ternary': 'error',
         'no-unused-vars': 'off',
         'typescript/no-unused-vars': 'error',
         'typescript/no-explicit-any': 'error'

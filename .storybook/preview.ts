@@ -4,6 +4,7 @@ import '../src/assets/styles/anime.scss'
 
 if (typeof document !== 'undefined') {
   document.documentElement.dataset.clvTheme = 'aqua'
+  delete document.documentElement.dataset.clvThemeMode
 }
 
 const preview: Preview = {

@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <AppearanceMenu />
     <Suspense>
       <router-view v-slot="{ Component, route }">
         <transition :name="getTransitionName(route)" mode="out-in">
@@ -21,6 +22,7 @@
 <script setup lang="ts">
 import { Spinner } from '@jtclarkjr/component-library-vue'
 import type { RouteLocationNormalized } from 'vue-router'
+import AppearanceMenu from '@/components/utils/AppearanceMenu.vue'
 
 // Determine transition type based on route
 const getTransitionName = (route: RouteLocationNormalized): string => {
@@ -90,8 +92,8 @@ const getTransitionName = (route: RouteLocationNormalized): string => {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  color: var(--text-muted, #888);
-  background: var(--bg-primary, #1a1a1a);
+  color: var(--text-muted);
+  background: var(--bg-primary);
 
   &__spinner {
     margin-bottom: 1rem;

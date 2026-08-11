@@ -3,6 +3,55 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      ;(() => {
+        const themeStorageKey = 'anichart.theme'
+        const modeStorageKey = 'anichart.theme-mode'
+        let theme = 'aqua'
+        let modePreference = 'system'
+
+        try {
+          const storedTheme = window.localStorage.getItem(themeStorageKey)
+          const storedModePreference = window.localStorage.getItem(modeStorageKey)
+
+          if (storedTheme === 'aqua' || storedTheme === 'neutral') {
+            theme = storedTheme
+          }
+
+          if (
+            storedModePreference === 'system' ||
+            storedModePreference === 'light' ||
+            storedModePreference === 'dark'
+          ) {
+            modePreference = storedModePreference
+          }
+        } catch {
+          // Storage can be unavailable in privacy-restricted browsing contexts.
+        }
+
+        document.documentElement.dataset.clvTheme = theme
+
+        if (theme === 'neutral') {
+          let mode = modePreference
+
+          if (modePreference === 'system') {
+            mode = 'dark'
+
+            if (typeof window.matchMedia === 'function') {
+              const colorScheme = window.matchMedia('(prefers-color-scheme: dark)')
+
+              if (!colorScheme.matches) {
+                mode = 'light'
+              }
+            }
+          }
+
+          document.documentElement.dataset.clvThemeMode = mode
+        } else {
+          delete document.documentElement.dataset.clvThemeMode
+        }
+      })()
+    </script>
     <title>AniChart</title>
   </head>
 

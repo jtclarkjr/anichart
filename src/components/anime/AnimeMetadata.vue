@@ -86,7 +86,7 @@ const formatSource = (source: MediaSource | null): string => {
   height: fit-content;
   padding: 1.5rem;
   overflow-wrap: break-word;
-  background: var(--card-bg);
+  background: var(--card-background);
   border: 1px solid var(--border-color);
   border-radius: 12px;
 
