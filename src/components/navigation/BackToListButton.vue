@@ -1,32 +1,30 @@
 <template>
-  <Button
-    :as="RouterLink"
-    to="/anime"
-    class="back-to-list"
-    variant="surface"
-    size="sm"
-    aria-label="Back to anime list"
-  >
-    <svg
-      class="back-to-list__icon"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      aria-hidden="true"
+  <RouterLink v-slot="{ href, navigate }" to="/anime" custom>
+    <Button
+      as="a"
+      :href="href"
+      class="back-to-list"
+      variant="surface"
+      size="sm"
+      aria-label="Back to anime list"
+      @click="navigate"
     >
-      <path d="m15 18-6-6 6-6" />
-    </svg>
-    <span>Back</span>
-  </Button>
+      <svg
+        class="back-to-list__icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="m15 18-6-6 6-6" />
+      </svg>
+      <span>Back</span>
+    </Button>
+  </RouterLink>
 </template>
-
-<script setup lang="ts">
-import { Button } from '@jtclarkjr/component-library-vue'
-import { RouterLink } from 'vue-router'
-</script>
 
 <style scoped lang="scss">
 .back-to-list {

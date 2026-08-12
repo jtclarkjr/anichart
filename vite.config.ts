@@ -4,6 +4,7 @@ import Components from 'unplugin-vue-components/vite'
 import { configDefaults, defineConfig, loadEnv } from 'vite-plus'
 import VueRouter from 'unplugin-vue-router/vite'
 import vue from '@vitejs/plugin-vue'
+import { componentLibraryResolver } from './config/componentLibraryResolver'
 
 export const createAppConfig = (apiUrl: string | undefined, isSsrBuild = false) =>
   defineConfig({
@@ -100,7 +101,8 @@ export const createAppConfig = (apiUrl: string | undefined, isSsrBuild = false) 
       }),
       vue(),
       Components({
-        dts: './components.d.ts'
+        dts: './components.d.ts',
+        resolvers: [componentLibraryResolver]
       }),
       AutoImport({
         include: [/\.[tj]sx?$/, /\.vue$/, /\.vue\?vue/, /\.md$/],

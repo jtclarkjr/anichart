@@ -12,13 +12,23 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Button: typeof import('@jtclarkjr/component-library-vue')['Button']
+    DropdownMenu: typeof import('@jtclarkjr/component-library-vue')['DropdownMenu']
+    Input: typeof import('@jtclarkjr/component-library-vue')['Input']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Select: typeof import('@jtclarkjr/component-library-vue')['Select']
+    Spinner: typeof import('@jtclarkjr/component-library-vue')['Spinner']
   }
 }
 
 // For TSX support
 declare global {
+  const Button: typeof import('@jtclarkjr/component-library-vue')['Button']
+  const DropdownMenu: typeof import('@jtclarkjr/component-library-vue')['DropdownMenu']
+  const Input: typeof import('@jtclarkjr/component-library-vue')['Input']
   const RouterLink: typeof import('vue-router')['RouterLink']
   const RouterView: typeof import('vue-router')['RouterView']
+  const Select: typeof import('@jtclarkjr/component-library-vue')['Select']
+  const Spinner: typeof import('@jtclarkjr/component-library-vue')['Spinner']
 }

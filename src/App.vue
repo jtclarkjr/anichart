@@ -20,7 +20,6 @@
 </template>
 
 <script setup lang="ts">
-import { Spinner } from '@jtclarkjr/component-library-vue'
 import type { RouteLocationNormalized } from 'vue-router'
 import AppearanceMenu from '@/components/utils/AppearanceMenu.vue'
 

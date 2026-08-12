@@ -17,8 +17,6 @@
 </template>
 
 <script setup lang="ts">
-import { Spinner } from '@jtclarkjr/component-library-vue'
-
 const isMounted = ref(false)
 
 onMounted(() => {

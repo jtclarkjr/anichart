@@ -29,7 +29,6 @@
 </template>
 
 <script setup lang="ts">
-import { Input, Select } from '@jtclarkjr/component-library-vue'
 import type { ChoiceOption } from '@jtclarkjr/component-library-vue'
 import { AnimeApi } from '@/utils/api/anime.api'
 import { MediaSort } from '@/utils/types/anilist'

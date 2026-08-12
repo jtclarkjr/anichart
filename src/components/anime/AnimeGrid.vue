@@ -44,7 +44,6 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Spinner } from '@jtclarkjr/component-library-vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import AnimeCard from './AnimeCard.vue'
 import { useInfiniteScroll } from '@/composables/useInfiniteScroll'

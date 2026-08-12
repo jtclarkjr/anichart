@@ -33,7 +33,6 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onServerPrefetch } from 'vue'
-import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import SearchFilters from '@/components/search/SearchFilters.vue'
 import AnimeGrid from '@/components/anime/AnimeGrid.vue'
 import ScrollToTop from '@/components/utils/ScrollToTop.vue'

@@ -38,7 +38,6 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Spinner } from '@jtclarkjr/component-library-vue'
 import AnimeBanner from '@/components/anime/AnimeBanner.vue'
 import AnimeDescription from '@/components/anime/AnimeDescription.vue'
 import AnimeMetadata from '@/components/anime/AnimeMetadata.vue'

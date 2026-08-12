@@ -4,6 +4,7 @@
     "vitest.config.*",
     "vitest.storybook.config.*",
     "cypress.config.*",
+    "config/**/*.ts",
     "api/index.ts",
     "dev-unified.ts",
     "dev-ssr.ts",

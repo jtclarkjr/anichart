@@ -81,12 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  Button,
-  DropdownMenu,
-  type ClvValue,
-  type DropdownMenuEntry
-} from '@jtclarkjr/component-library-vue'
+import type { ClvValue, DropdownMenuEntry } from '@jtclarkjr/component-library-vue'
 import { computed } from 'vue'
 import {
   useAppearance,
