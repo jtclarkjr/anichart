@@ -4,9 +4,14 @@ import Components from 'unplugin-vue-components/vite'
 import { configDefaults, defineConfig, loadEnv } from 'vite-plus'
 import VueRouter from 'unplugin-vue-router/vite'
 import vue from '@vitejs/plugin-vue'
+import VueDevTools from 'vite-plugin-vue-devtools'
 import { componentLibraryResolver } from './config/componentLibraryResolver'
 
-export const createAppConfig = (apiUrl: string | undefined, isSsrBuild = false) =>
+export const createAppConfig = (
+  apiUrl: string | undefined,
+  isSsrBuild = false,
+  enableDevTools = false
+) =>
   defineConfig({
     staged: {
       '*': 'vp check --fix'
@@ -99,6 +104,7 @@ export const createAppConfig = (apiUrl: string | undefined, isSsrBuild = false) 
         routeBlockLang: 'yaml',
         exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**']
       }),
+      enableDevTools && VueDevTools({ appendTo: '/src/entry-client.ts' }),
       vue(),
       Components({
         dts: './components.d.ts',
@@ -161,7 +167,7 @@ export const createAppConfig = (apiUrl: string | undefined, isSsrBuild = false) 
       : undefined
   })
 
-export default defineConfig(({ mode, isSsrBuild }) => {
+export default defineConfig(({ command, mode, isSsrBuild }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const apiUrl = env.ANILIST_API_URL
 
@@ -171,5 +177,5 @@ export default defineConfig(({ mode, isSsrBuild }) => {
     )
   }
 
-  return createAppConfig(apiUrl, isSsrBuild)
+  return createAppConfig(apiUrl, isSsrBuild, command === 'serve')
 })
