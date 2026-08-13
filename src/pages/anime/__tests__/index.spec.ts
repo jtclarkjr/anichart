@@ -2,7 +2,7 @@ import { createTestingPinia } from '@pinia/testing'
 import { mount } from '@vue/test-utils'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import AnimeIndex from './index.vue'
+import AnimeIndex from '../index.vue'
 import { useAnimeStore } from '@/stores/anime'
 import { MediaType, type Media } from '@/utils/types/anilist'
 

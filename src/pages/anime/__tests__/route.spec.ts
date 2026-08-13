@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createAnimeDetailRouteProps } from './route'
+import { createAnimeDetailRouteProps } from '../route'
 
 describe('createAnimeDetailRouteProps', () => {
   it.each([
