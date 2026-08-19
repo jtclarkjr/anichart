@@ -10,9 +10,15 @@ interface ImportMeta {
   readonly env: ImportMetaEnv
 }
 
+// eslint-disable-next-line no-underscore-dangle -- Vite replaces this compile-time global.
+declare const __VERCEL_ANALYTICS_ENABLED__: boolean
+
 interface Window {
   __PINIA_STATE__?: Record<string, import('pinia').StateTree>
-  __ENV__?: { ANILIST_API_URL?: string }
+  __ENV__?: {
+    ANILIST_API_URL?: string
+    VERCEL_ANALYTICS_ENABLED?: boolean
+  }
 }
 
 declare module '*.vue' {

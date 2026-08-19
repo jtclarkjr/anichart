@@ -1,6 +1,6 @@
 import { createSSRApp } from 'vue'
 import { createPinia } from 'pinia'
-import { inject } from '@vercel/analytics'
+import { initializeVercelAnalytics } from '@/plugins/vercelAnalytics'
 import App from './App.vue'
 import pages from '@/pages'
 import '@jtclarkjr/component-library-vue/style.css'
@@ -24,5 +24,5 @@ app.use(pinia)
 // Wait for router to be ready and then mount
 void pages.isReady().then(() => {
   app.mount('#app')
-  inject()
+  initializeVercelAnalytics()
 })

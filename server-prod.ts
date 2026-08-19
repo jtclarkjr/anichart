@@ -90,7 +90,10 @@ Bun.serve({
         )
         .replace(
           '<!--env-vars-->',
-          `<script>window.__ENV__ = ${JSON.stringify({ ANILIST_API_URL: process.env.ANILIST_API_URL })}</script>`
+          `<script>window.__ENV__ = ${JSON.stringify({
+            ANILIST_API_URL: process.env.ANILIST_API_URL,
+            VERCEL_ANALYTICS_ENABLED: process.env.VERCEL_ENV === 'production'
+          })}</script>`
         )
 
       return new Response(responseHtml, {

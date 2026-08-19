@@ -70,7 +70,8 @@ export const createAppConfig = (
       ]
     },
     define: {
-      'import.meta.env.ANILIST_API_URL': JSON.stringify(apiUrl ?? '')
+      'import.meta.env.ANILIST_API_URL': JSON.stringify(apiUrl ?? ''),
+      __VERCEL_ANALYTICS_ENABLED__: JSON.stringify(process.env.VERCEL_ENV === 'production')
     },
     css: {
       preprocessorOptions: {
