@@ -5,16 +5,17 @@ import { playwright } from 'vite-plus/test/browser-playwright'
 import { defineConfig, mergeConfig } from 'vite-plus'
 import { createAppConfig } from './vite.config'
 
-const directory = dirname(fileURLToPath(import.meta.url))
+const repositoryRoot = dirname(fileURLToPath(import.meta.url))
 
 export default mergeConfig(
   createAppConfig(undefined),
   defineConfig({
-    plugins: [storybookTest({ configDir: join(directory, '.storybook') })],
+    plugins: [storybookTest({ configDir: join(repositoryRoot, '.storybook') })],
     optimizeDeps: {
       include: [
         '@storybook/addon-a11y/preview',
         '@storybook/vue3-vite',
+        '@jtclarkjr/component-library-vue',
         'aria-query',
         'lz-string',
         'pretty-format',
@@ -23,7 +24,8 @@ export default mergeConfig(
     },
     test: {
       name: 'storybook',
-      setupFiles: ['.storybook/vitest.setup.ts'],
+      root: repositoryRoot,
+      setupFiles: [join(repositoryRoot, '.storybook/vitest.setup.ts')],
       browser: {
         enabled: true,
         headless: true,

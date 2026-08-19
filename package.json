@@ -18,6 +18,7 @@
     "build": "vp run pre-build && vp run build:ssr",
     "test:unit": "vp test run --passWithNoTests --environment jsdom --root src/",
     "test:storybook": "vp test run --config vitest.storybook.config.ts",
+    "test:storybook:install-browser": "playwright install chromium",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "lint": "vp lint",

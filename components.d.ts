@@ -19,9 +19,7 @@ declare module 'vue' {
     AnimeMetadata: typeof import('./src/components/anime/AnimeMetadata.vue')['default']
     AppearanceMenu: typeof import('./src/components/utils/AppearanceMenu.vue')['default']
     BackToListButton: typeof import('./src/components/navigation/BackToListButton.vue')['default']
-    Button: typeof import('@jtclarkjr/component-library-vue')['Button']
     ClientOnly: typeof import('./src/components/utils/ClientOnly.vue')['default']
-    DropdownMenu: typeof import('@jtclarkjr/component-library-vue')['DropdownMenu']
     Input: typeof import('@jtclarkjr/component-library-vue')['Input']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
@@ -29,7 +27,6 @@ declare module 'vue' {
     ScrollToTop: typeof import('./src/components/utils/ScrollToTop.vue')['default']
     SearchFilters: typeof import('./src/components/search/SearchFilters.vue')['default']
     Select: typeof import('@jtclarkjr/component-library-vue')['Select']
-    Spinner: typeof import('@jtclarkjr/component-library-vue')['Spinner']
   }
 }
 
@@ -42,9 +39,7 @@ declare global {
   const AnimeMetadata: typeof import('./src/components/anime/AnimeMetadata.vue')['default']
   const AppearanceMenu: typeof import('./src/components/utils/AppearanceMenu.vue')['default']
   const BackToListButton: typeof import('./src/components/navigation/BackToListButton.vue')['default']
-  const Button: typeof import('@jtclarkjr/component-library-vue')['Button']
   const ClientOnly: typeof import('./src/components/utils/ClientOnly.vue')['default']
-  const DropdownMenu: typeof import('@jtclarkjr/component-library-vue')['DropdownMenu']
   const Input: typeof import('@jtclarkjr/component-library-vue')['Input']
   const RouterLink: typeof import('vue-router')['RouterLink']
   const RouterView: typeof import('vue-router')['RouterView']
@@ -52,5 +47,4 @@ declare global {
   const ScrollToTop: typeof import('./src/components/utils/ScrollToTop.vue')['default']
   const SearchFilters: typeof import('./src/components/search/SearchFilters.vue')['default']
   const Select: typeof import('@jtclarkjr/component-library-vue')['Select']
-  const Spinner: typeof import('@jtclarkjr/component-library-vue')['Spinner']
 }

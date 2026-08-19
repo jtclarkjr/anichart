@@ -20,7 +20,8 @@ export const createAppConfig = (
       globals: true,
       environment: 'jsdom',
       exclude: [...configDefaults.exclude, 'e2e/**'],
-      root: fileURLToPath(new URL('./src', import.meta.url))
+      root: fileURLToPath(new URL('./src', import.meta.url)),
+      setupFiles: [fileURLToPath(new URL('./src/vitest.setup.ts', import.meta.url))]
     },
     lint: {
       plugins: ['vue', 'typescript', 'unicorn'],
