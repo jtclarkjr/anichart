@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import AnimeCard from '../anime/AnimeCard.vue'
 import { MediaType, type Media, type MediaCoverImage } from '@/utils/types/anilist'
 

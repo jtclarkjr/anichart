@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { createPinia, setActivePinia } from 'pinia'
 import { useAnimeStore } from './anime'
 import { getAnimeDetails, getAnimeList } from '@/utils/api/anime.api'

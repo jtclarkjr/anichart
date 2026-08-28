@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { TransitionGroup } from 'vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import AnimeCard from '../anime/AnimeCard.vue'
 import AnimeGrid from '../anime/AnimeGrid.vue'
 import { MediaType, type Media } from '@/utils/types/anilist'

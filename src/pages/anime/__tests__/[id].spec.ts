@@ -1,7 +1,7 @@
 import { createTestingPinia } from '@pinia/testing'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createMemoryHistory, createRouter } from 'vue-router'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import AnimeDetails from '../[id].vue'
 import { createAnimeDetailRouteProps } from '../route'
 import { useAnimeStore } from '@/stores/anime'
