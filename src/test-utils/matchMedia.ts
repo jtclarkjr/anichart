@@ -1,4 +1,4 @@
-import { vi } from 'vitest'
+import { vi } from 'vite-plus/test'
 
 class TestMediaQueryListEvent extends Event implements MediaQueryListEvent {
   readonly matches: boolean

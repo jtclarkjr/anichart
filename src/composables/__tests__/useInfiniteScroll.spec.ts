@@ -1,6 +1,6 @@
 import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { defineComponent, nextTick, ref } from 'vue'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { useInfiniteScroll } from '../useInfiniteScroll'
 
 enableAutoUnmount(afterEach)

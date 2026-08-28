@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { Select } from '@jtclarkjr/component-library-vue'
 import type { ConcreteComponent } from 'vue'
 import SearchFilters from '../search/SearchFilters.vue'

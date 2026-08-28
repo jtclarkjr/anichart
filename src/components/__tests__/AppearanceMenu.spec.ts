@@ -1,6 +1,6 @@
 import { enableAutoUnmount, mount, type VueWrapper } from '@vue/test-utils'
 import { nextTick } from 'vue'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import {
   DropdownMenu,
   type ClvValue,

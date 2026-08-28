@@ -1,5 +1,5 @@
 import { enableAutoUnmount, mount } from '@vue/test-utils'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import ScrollToTop from '../utils/ScrollToTop.vue'
 
 enableAutoUnmount(afterEach)
@@ -10,18 +10,16 @@ const setViewport = (scrollY: number, innerHeight = 800) => {
 }
 
 const createMatchMedia = (matches: boolean) =>
-  vi.fn(
-    (media: string): MediaQueryList => ({
-      matches,
-      media,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(() => true)
-    })
-  )
+  vi.fn((media: string): MediaQueryList => ({
+    matches,
+    media,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(() => true)
+  }))
 
 beforeEach(() => {
   setViewport(0)
