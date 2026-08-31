@@ -1,42 +1,3 @@
-<template>
-  <div class="anime-details">
-    <BackToListButton />
-
-    <div v-if="error" class="error">
-      <p>{{ error }}</p>
-      <Button class="retry-btn" size="lg" @click="retryAnimeDetails">Retry</Button>
-    </div>
-
-    <div v-else-if="anime" class="details-content">
-      <!-- Banner Section -->
-      <AnimeBanner :anime="anime" />
-
-      <!-- Main Content -->
-      <div class="container">
-        <div class="content-grid">
-          <div class="main-content">
-            <AnimeDescription :anime="anime" />
-          </div>
-
-          <div class="sidebar">
-            <AnimeMetadata :anime="anime" />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div v-else-if="isLoading || (!anime && !error)" class="loading">
-      <Spinner class="anime-details__spinner" decorative size="lg" />
-      <p>Loading anime details...</p>
-    </div>
-
-    <!-- Empty state for when no data and no error (shouldn't happen with proper routing) -->
-    <div v-else class="error">
-      <p>Anime not found</p>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import AnimeBanner from '@/components/anime/AnimeBanner.vue'
 import AnimeDescription from '@/components/anime/AnimeDescription.vue'
@@ -112,6 +73,45 @@ watch(
   }
 )
 </script>
+
+<template>
+  <div class="anime-details">
+    <BackToListButton />
+
+    <div v-if="error" class="error">
+      <p>{{ error }}</p>
+      <Button class="retry-btn" size="lg" @click="retryAnimeDetails">Retry</Button>
+    </div>
+
+    <div v-else-if="anime" class="details-content">
+      <!-- Banner Section -->
+      <AnimeBanner :anime="anime" />
+
+      <!-- Main Content -->
+      <div class="container">
+        <div class="content-grid">
+          <div class="main-content">
+            <AnimeDescription :anime="anime" />
+          </div>
+
+          <div class="sidebar">
+            <AnimeMetadata :anime="anime" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-else-if="isLoading || (!anime && !error)" class="loading">
+      <Spinner class="anime-details__spinner" decorative size="lg" />
+      <p>Loading anime details...</p>
+    </div>
+
+    <!-- Empty state for when no data and no error (shouldn't happen with proper routing) -->
+    <div v-else class="error">
+      <p>Anime not found</p>
+    </div>
+  </div>
+</template>
 
 <style scoped lang="scss">
 .anime-details {

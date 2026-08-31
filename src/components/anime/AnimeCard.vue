@@ -1,37 +1,3 @@
-<template>
-  <div class="anime-card" @click="$emit('click', anime.id)">
-    <div class="card-image">
-      <img
-        ref="imageRef"
-        :src="cardImageSrc"
-        :srcset="cardImageSrcset"
-        :sizes="CARD_IMAGE_SIZES"
-        :alt="getDisplayTitle(anime.title)"
-        :class="{ 'image-loaded': imageLoaded }"
-        loading="lazy"
-        decoding="async"
-        @load="handleImageLoad"
-        @error="handleImageError"
-      />
-      <div class="card-overlay">
-        <div class="score" v-if="anime.averageScore">{{ anime.averageScore }}%</div>
-      </div>
-    </div>
-    <div class="card-content">
-      <h3 class="title">{{ getDisplayTitle(anime.title) }}</h3>
-      <div class="meta">
-        <span class="year">{{ formatYear(anime.startDate) }}</span>
-        <span class="format" v-if="anime.format">{{ anime.format }}</span>
-      </div>
-      <div class="genres">
-        <span v-for="genre in anime.genres.slice(0, 2)" :key="genre" class="genre-tag">
-          {{ genre }}
-        </span>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useProgressiveImage } from '@/composables/useProgressiveImage'
@@ -88,6 +54,40 @@ const {
 const getDisplayTitle = AnimeApi.getDisplayTitle
 const formatYear = AnimeApi.formatYear
 </script>
+
+<template>
+  <div class="anime-card" @click="$emit('click', anime.id)">
+    <div class="card-image">
+      <img
+        ref="imageRef"
+        :src="cardImageSrc"
+        :srcset="cardImageSrcset"
+        :sizes="CARD_IMAGE_SIZES"
+        :alt="getDisplayTitle(anime.title)"
+        :class="{ 'image-loaded': imageLoaded }"
+        loading="lazy"
+        decoding="async"
+        @load="handleImageLoad"
+        @error="handleImageError"
+      />
+      <div class="card-overlay">
+        <div class="score" v-if="anime.averageScore">{{ anime.averageScore }}%</div>
+      </div>
+    </div>
+    <div class="card-content">
+      <h3 class="title">{{ getDisplayTitle(anime.title) }}</h3>
+      <div class="meta">
+        <span class="year">{{ formatYear(anime.startDate) }}</span>
+        <span class="format" v-if="anime.format">{{ anime.format }}</span>
+      </div>
+      <div class="genres">
+        <span v-for="genre in anime.genres.slice(0, 2)" :key="genre" class="genre-tag">
+          {{ genre }}
+        </span>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped lang="scss">
 .anime-card {

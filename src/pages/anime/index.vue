@@ -1,36 +1,3 @@
-<template>
-  <div class="anime-list">
-    <div class="header">
-      <div class="container">
-        <h1>AniChart</h1>
-        <SearchFilters
-          v-model:searchQuery="searchQuery"
-          v-model:selectedSort="selectedSort"
-          v-model:selectedSeason="selectedSeason"
-          @filterChange="handleFilterChange"
-        />
-      </div>
-    </div>
-
-    <div class="container">
-      <AnimeGrid
-        :anime="animeStore.displayedAnime"
-        :loading="animeStore.loading"
-        :loadingMore="animeStore.loadingMore"
-        :error="animeStore.error"
-        :hasData="animeStore.currentAnime.length > 0"
-        :hasMoreToShow="animeStore.hasMoreToShow"
-        :totalCount="animeStore.currentCount"
-        @animeClick="goToDetails"
-        @retry="animeStore.loadInitialData"
-        @loadMore="animeStore.loadMoreData"
-      />
-    </div>
-
-    <ScrollToTop />
-  </div>
-</template>
-
 <script setup lang="ts">
 import { computed, onMounted, onServerPrefetch } from 'vue'
 import SearchFilters from '@/components/search/SearchFilters.vue'
@@ -111,6 +78,39 @@ onBeforeRouteLeave(() => {
   }
 })
 </script>
+
+<template>
+  <div class="anime-list">
+    <div class="header">
+      <div class="container">
+        <h1>AniChart</h1>
+        <SearchFilters
+          v-model:searchQuery="searchQuery"
+          v-model:selectedSort="selectedSort"
+          v-model:selectedSeason="selectedSeason"
+          @filterChange="handleFilterChange"
+        />
+      </div>
+    </div>
+
+    <div class="container">
+      <AnimeGrid
+        :anime="animeStore.displayedAnime"
+        :loading="animeStore.loading"
+        :loadingMore="animeStore.loadingMore"
+        :error="animeStore.error"
+        :hasData="animeStore.currentAnime.length > 0"
+        :hasMoreToShow="animeStore.hasMoreToShow"
+        :totalCount="animeStore.currentCount"
+        @animeClick="goToDetails"
+        @retry="animeStore.loadInitialData"
+        @loadMore="animeStore.loadMoreData"
+      />
+    </div>
+
+    <ScrollToTop />
+  </div>
+</template>
 
 <style scoped lang="scss">
 .anime-list {

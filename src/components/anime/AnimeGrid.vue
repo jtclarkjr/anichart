@@ -1,48 +1,3 @@
-<template>
-  <div class="anime-grid-container">
-    <!-- Consistent rendering for SSR/CSR hydration -->
-    <div v-if="shouldShowLoading" class="loading">
-      <Spinner class="anime-grid__spinner" decorative size="lg" />
-      <p>Loading anime...</p>
-    </div>
-
-    <div v-else-if="error" class="error">
-      <p>{{ error }}</p>
-      <Button class="retry-btn" size="sm" @click="$emit('retry')">Retry</Button>
-    </div>
-
-    <div v-else-if="shouldShowEmpty" class="empty">
-      <p>No anime found</p>
-    </div>
-
-    <TransitionGroup
-      v-else-if="shouldShowGrid"
-      name="anime-card"
-      tag="div"
-      class="anime-grid"
-      appear
-    >
-      <AnimeCard
-        v-for="(item, index) in anime"
-        :key="item.id"
-        :anime="item"
-        :style="{ '--card-delay': getCardDelay(index) }"
-        @click="$emit('animeClick', $event)"
-      />
-    </TransitionGroup>
-
-    <div v-if="hasMoreToShow && !error" ref="loadTrigger" class="load-trigger">
-      <div v-if="loadingMore" class="loading-more">
-        <Spinner decorative size="sm" />
-        <p>Loading more anime...</p>
-      </div>
-      <div v-else class="showing-more">
-        <p>Showing {{ anime.length }} of {{ totalCount }} anime</p>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import AnimeCard from './AnimeCard.vue'
@@ -129,6 +84,51 @@ defineExpose({
   loadTrigger
 })
 </script>
+
+<template>
+  <div class="anime-grid-container">
+    <!-- Consistent rendering for SSR/CSR hydration -->
+    <div v-if="shouldShowLoading" class="loading">
+      <Spinner class="anime-grid__spinner" decorative size="lg" />
+      <p>Loading anime...</p>
+    </div>
+
+    <div v-else-if="error" class="error">
+      <p>{{ error }}</p>
+      <Button class="retry-btn" size="sm" @click="$emit('retry')">Retry</Button>
+    </div>
+
+    <div v-else-if="shouldShowEmpty" class="empty">
+      <p>No anime found</p>
+    </div>
+
+    <TransitionGroup
+      v-else-if="shouldShowGrid"
+      name="anime-card"
+      tag="div"
+      class="anime-grid"
+      appear
+    >
+      <AnimeCard
+        v-for="(item, index) in anime"
+        :key="item.id"
+        :anime="item"
+        :style="{ '--card-delay': getCardDelay(index) }"
+        @click="$emit('animeClick', $event)"
+      />
+    </TransitionGroup>
+
+    <div v-if="hasMoreToShow && !error" ref="loadTrigger" class="load-trigger">
+      <div v-if="loadingMore" class="loading-more">
+        <Spinner decorative size="sm" />
+        <p>Loading more anime...</p>
+      </div>
+      <div v-else class="showing-more">
+        <p>Showing {{ anime.length }} of {{ totalCount }} anime</p>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped lang="scss">
 .anime-grid-container {

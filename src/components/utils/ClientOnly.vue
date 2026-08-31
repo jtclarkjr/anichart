@@ -1,3 +1,11 @@
+<script setup lang="ts">
+const isMounted = ref(false)
+
+onMounted(() => {
+  isMounted.value = true
+})
+</script>
+
 <template>
   <!-- Always render the same root element to prevent hydration mismatch -->
   <div class="client-only-wrapper">
@@ -15,14 +23,6 @@
     </template>
   </div>
 </template>
-
-<script setup lang="ts">
-const isMounted = ref(false)
-
-onMounted(() => {
-  isMounted.value = true
-})
-</script>
 
 <style scoped lang="scss">
 .client-only-wrapper {

@@ -1,10 +1,3 @@
-<template>
-  <section class="description-section">
-    <h2>Description</h2>
-    <div class="description" v-html="anime.description || 'No description available.'"></div>
-  </section>
-</template>
-
 <script setup lang="ts">
 import type { Media } from '@/utils/types/anilist'
 
@@ -14,6 +7,13 @@ interface Props {
 
 defineProps<Props>()
 </script>
+
+<template>
+  <section class="description-section">
+    <h2>Description</h2>
+    <div class="description" v-html="anime.description || 'No description available.'"></div>
+  </section>
+</template>
 
 <style scoped lang="scss">
 .description-section {

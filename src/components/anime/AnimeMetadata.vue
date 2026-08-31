@@ -1,39 +1,3 @@
-<template>
-  <div class="info-panel">
-    <h3>Information</h3>
-    <div class="info-grid">
-      <div class="info-item" v-if="anime.startDate?.year">
-        <span class="label">Start Date:</span>
-        <span class="value">{{ formatDate(anime.startDate) }}</span>
-      </div>
-      <div class="info-item" v-if="anime.endDate?.year">
-        <span class="label">End Date:</span>
-        <span class="value">{{ formatDate(anime.endDate) }}</span>
-      </div>
-      <div class="info-item" v-if="anime.season">
-        <span class="label">Season:</span>
-        <span class="value">{{ anime.season }} {{ anime.seasonYear }}</span>
-      </div>
-      <div class="info-item" v-if="anime.source">
-        <span class="label">Source:</span>
-        <span class="value">{{ formatSource(anime.source) }}</span>
-      </div>
-      <div class="info-item" v-if="anime.studios?.nodes?.length">
-        <span class="label">Studio:</span>
-        <span class="value">{{ anime.studios.nodes.map((s) => s.name).join(', ') }}</span>
-      </div>
-      <div class="info-item" v-if="anime.popularity">
-        <span class="label">Popularity:</span>
-        <span class="value">#{{ anime.popularity.toLocaleString() }}</span>
-      </div>
-      <div class="info-item" v-if="anime.favourites">
-        <span class="label">Favourites:</span>
-        <span class="value">{{ anime.favourites.toLocaleString() }}</span>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import type { Media, MediaSource } from '@/utils/types/anilist'
 
@@ -79,6 +43,42 @@ const formatSource = (source: MediaSource | null): string => {
     .join(' ')
 }
 </script>
+
+<template>
+  <div class="info-panel">
+    <h3>Information</h3>
+    <div class="info-grid">
+      <div class="info-item" v-if="anime.startDate?.year">
+        <span class="label">Start Date:</span>
+        <span class="value">{{ formatDate(anime.startDate) }}</span>
+      </div>
+      <div class="info-item" v-if="anime.endDate?.year">
+        <span class="label">End Date:</span>
+        <span class="value">{{ formatDate(anime.endDate) }}</span>
+      </div>
+      <div class="info-item" v-if="anime.season">
+        <span class="label">Season:</span>
+        <span class="value">{{ anime.season }} {{ anime.seasonYear }}</span>
+      </div>
+      <div class="info-item" v-if="anime.source">
+        <span class="label">Source:</span>
+        <span class="value">{{ formatSource(anime.source) }}</span>
+      </div>
+      <div class="info-item" v-if="anime.studios?.nodes?.length">
+        <span class="label">Studio:</span>
+        <span class="value">{{ anime.studios.nodes.map((s) => s.name).join(', ') }}</span>
+      </div>
+      <div class="info-item" v-if="anime.popularity">
+        <span class="label">Popularity:</span>
+        <span class="value">#{{ anime.popularity.toLocaleString() }}</span>
+      </div>
+      <div class="info-item" v-if="anime.favourites">
+        <span class="label">Favourites:</span>
+        <span class="value">{{ anime.favourites.toLocaleString() }}</span>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped lang="scss">
 .info-panel {

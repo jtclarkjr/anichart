@@ -1,3 +1,20 @@
+<script setup lang="ts">
+import { AnimeApi } from '@/utils/api/anime.api'
+import type { Media } from '@/utils/types/anilist'
+
+interface Props {
+  anime: Media
+}
+
+defineProps<Props>()
+
+// Helper functions
+const getDisplayTitle = AnimeApi.getDisplayTitle
+const getSafeImageUrl = AnimeApi.getSafeImageUrl
+const formatScore = AnimeApi.formatScore
+const formatStatus = AnimeApi.formatStatus
+</script>
+
 <template>
   <div
     class="banner"
@@ -44,23 +61,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { AnimeApi } from '@/utils/api/anime.api'
-import type { Media } from '@/utils/types/anilist'
-
-interface Props {
-  anime: Media
-}
-
-defineProps<Props>()
-
-// Helper functions
-const getDisplayTitle = AnimeApi.getDisplayTitle
-const getSafeImageUrl = AnimeApi.getSafeImageUrl
-const formatScore = AnimeApi.formatScore
-const formatStatus = AnimeApi.formatStatus
-</script>
 
 <style scoped lang="scss">
 .banner {

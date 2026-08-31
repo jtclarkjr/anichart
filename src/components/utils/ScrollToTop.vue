@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import { useScrollToTop } from '@/composables/useScrollToTop'
+
+const { isVisible, scrollToTop } = useScrollToTop()
+</script>
+
 <template>
   <Transition name="scroll-to-top">
     <Button
@@ -23,12 +29,6 @@
     </Button>
   </Transition>
 </template>
-
-<script setup lang="ts">
-import { useScrollToTop } from '@/composables/useScrollToTop'
-
-const { isVisible, scrollToTop } = useScrollToTop()
-</script>
 
 <style scoped lang="scss">
 .scroll-to-top {

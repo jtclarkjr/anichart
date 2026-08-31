@@ -1,33 +1,3 @@
-<template>
-  <div class="search-filters">
-    <div class="search-section">
-      <Input
-        v-model="searchModel"
-        type="search"
-        placeholder="Search anime..."
-        aria-label="Search anime"
-        clearable
-        clear-label="Clear search"
-        @clear="handleSearchClear"
-      />
-    </div>
-    <div class="filters">
-      <Select
-        v-model="sortModel"
-        :options="sortOptions"
-        aria-label="Sort anime"
-        @update:model-value="handleFilterChange"
-      />
-      <Select
-        v-model="seasonModel"
-        :options="availableSeasons"
-        aria-label="Filter by season"
-        @update:model-value="handleFilterChange"
-      />
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import type { ChoiceOption } from '@jtclarkjr/component-library-vue'
 import { AnimeApi } from '@/utils/api/anime.api'
@@ -134,6 +104,36 @@ const handleSearchClear = () => {
   emit('filterChange')
 }
 </script>
+
+<template>
+  <div class="search-filters">
+    <div class="search-section">
+      <Input
+        v-model="searchModel"
+        type="search"
+        placeholder="Search anime..."
+        aria-label="Search anime"
+        clearable
+        clear-label="Clear search"
+        @clear="handleSearchClear"
+      />
+    </div>
+    <div class="filters">
+      <Select
+        v-model="sortModel"
+        :options="sortOptions"
+        aria-label="Sort anime"
+        @update:model-value="handleFilterChange"
+      />
+      <Select
+        v-model="seasonModel"
+        :options="availableSeasons"
+        aria-label="Filter by season"
+        @update:model-value="handleFilterChange"
+      />
+    </div>
+  </div>
+</template>
 
 <style scoped lang="scss">
 .search-filters {

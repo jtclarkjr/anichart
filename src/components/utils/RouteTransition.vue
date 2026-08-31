@@ -1,28 +1,3 @@
-<template>
-  <div class="route-transition">
-    <transition
-      :name="transitionName"
-      mode="out-in"
-      @before-enter="onBeforeEnter"
-      @enter="onEnter"
-      @leave="onLeave"
-      @after-leave="onAfterLeave"
-    >
-      <slot />
-    </transition>
-
-    <!-- Loading overlay during transition -->
-    <transition name="loading-fade">
-      <div v-if="isTransitioning" class="transition-loading">
-        <div class="loading-indicator">
-          <Spinner decorative size="md" />
-          <p>Loading...</p>
-        </div>
-      </div>
-    </transition>
-  </div>
-</template>
-
 <script setup lang="ts">
 interface Props {
   transitionName?: string
@@ -64,6 +39,31 @@ const onAfterLeave = () => {
   }
 }
 </script>
+
+<template>
+  <div class="route-transition">
+    <transition
+      :name="transitionName"
+      mode="out-in"
+      @before-enter="onBeforeEnter"
+      @enter="onEnter"
+      @leave="onLeave"
+      @after-leave="onAfterLeave"
+    >
+      <slot />
+    </transition>
+
+    <!-- Loading overlay during transition -->
+    <transition name="loading-fade">
+      <div v-if="isTransitioning" class="transition-loading">
+        <div class="loading-indicator">
+          <Spinner decorative size="md" />
+          <p>Loading...</p>
+        </div>
+      </div>
+    </transition>
+  </div>
+</template>
 
 <style scoped lang="scss">
 .route-transition {

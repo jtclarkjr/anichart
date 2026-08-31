@@ -1,3 +1,18 @@
+<script setup lang="ts">
+import type { RouteLocationNormalized } from 'vue-router'
+import AppearanceMenu from '@/components/utils/AppearanceMenu.vue'
+
+// Determine transition type based on route
+const getTransitionName = (route: RouteLocationNormalized): string => {
+  // Smooth fade transition for detail pages
+  if (route.path.startsWith('/anime/') && route.path !== '/anime') {
+    return 'fade-slide'
+  }
+  // Default fade transition for other navigation
+  return 'fade'
+}
+</script>
+
 <template>
   <div id="app">
     <AppearanceMenu />
@@ -18,21 +33,6 @@
     </Suspense>
   </div>
 </template>
-
-<script setup lang="ts">
-import type { RouteLocationNormalized } from 'vue-router'
-import AppearanceMenu from '@/components/utils/AppearanceMenu.vue'
-
-// Determine transition type based on route
-const getTransitionName = (route: RouteLocationNormalized): string => {
-  // Smooth fade transition for detail pages
-  if (route.path.startsWith('/anime/') && route.path !== '/anime') {
-    return 'fade-slide'
-  }
-  // Default fade transition for other navigation
-  return 'fade'
-}
-</script>
 
 <style lang="scss">
 #app {
