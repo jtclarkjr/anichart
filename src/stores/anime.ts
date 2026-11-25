@@ -46,7 +46,7 @@ export const useAnimeStore = defineStore('anime', {
       currentPage: 1,
       itemsPerPage: 50,
       totalAvailable: 0,
-      hasNextPage: true,
+      hasNextPage: false,
       cache: {},
       animeDetailsById: {}
     }
@@ -333,7 +333,7 @@ export const useAnimeStore = defineStore('anime', {
       this.error = ''
       this.currentPage = 1
       this.totalAvailable = 0
-      this.hasNextPage = true
+      this.hasNextPage = false
       this.cache = {}
     },
 

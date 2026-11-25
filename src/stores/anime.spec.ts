@@ -113,6 +113,19 @@ describe('anime detail cache', () => {
 })
 
 describe('anime list season filtering', () => {
+  it('enables pagination only after the first page reports more results', async () => {
+    const store = useAnimeStore()
+    const firstPage = createPage(createAnime(9))
+    firstPage.pageInfo.hasNextPage = true
+    mockedGetAnimeList.mockResolvedValueOnce(firstPage).mockResolvedValueOnce(createPage())
+
+    await store.loadMoreData()
+    await store.loadInitialData()
+    await store.loadMoreData()
+
+    expect(mockedGetAnimeList.mock.calls.map(([params]) => params?.page)).toEqual([1, 2])
+  })
+
   it('keeps the season and year when an unmatched search is cleared and retyped', async () => {
     const store = useAnimeStore()
     const anime = createAnime(5)

@@ -8,6 +8,12 @@ import debounce from '@/utils/helpers/debounce'
 
 const router = useRouter()
 const animeStore = useAnimeStore()
+const hasMounted = ref(false)
+
+// The browser can recover from a failed server prefetch during startup.
+const awaitingInitialRetry = computed(
+  () => !hasMounted.value && !animeStore.currentAnime.length && Boolean(animeStore.error)
+)
 
 // Keep the populated list visible until the detail record is ready for the destination.
 const goToDetails = async (id: number) => {
@@ -68,6 +74,7 @@ onServerPrefetch(async () => {
 
 // Initialize on client
 onMounted(async () => {
+  hasMounted.value = true
   // Load anime data if not already loaded (client-side fallback)
   if (!animeStore.currentAnime.length) {
     await animeStore.loadInitialData()
@@ -101,7 +108,7 @@ onBeforeRouteLeave(() => {
     <div class="container">
       <AnimeGrid
         :anime="animeStore.displayedAnime"
-        :loading="animeStore.loading"
+        :loading="animeStore.loading || awaitingInitialRetry"
         :loadingMore="animeStore.loadingMore"
         :error="animeStore.error"
         :hasData="animeStore.currentAnime.length > 0"

@@ -1,6 +1,8 @@
 import { createTestingPinia } from '@pinia/testing'
-import { mount } from '@vue/test-utils'
-import { createMemoryHistory, createRouter } from 'vue-router'
+import { flushPromises, mount } from '@vue/test-utils'
+import { createSSRApp, nextTick } from 'vue'
+import { createMemoryHistory, createRouter, RouterView } from 'vue-router'
+import { renderToString } from 'vue/server-renderer'
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import AnimeIndex from '../index.vue'
 import AnimeGrid from '@/components/anime/AnimeGrid.vue'
@@ -74,6 +76,82 @@ afterEach(() => {
   vi.restoreAllMocks()
 })
 
+const createAnimePageRouter = () =>
+  createRouter({
+    history: createMemoryHistory(),
+    routes: [{ path: '/anime', component: AnimeIndex }]
+  })
+
+const renderAnimePage = async (pinia: ReturnType<typeof createTestingPinia>) => {
+  const router = createAnimePageRouter()
+  await router.push('/anime')
+
+  return renderToString(createSSRApp(RouterView).use(router).use(pinia))
+}
+
+describe('Anime list initial loading', () => {
+  const listError = 'Failed to load anime data. Please try again.'
+
+  it('server-renders anime after successful prefetch', async () => {
+    const pinia = createTestingPinia({ createSpy: vi.fn })
+    const store = useAnimeStore(pinia)
+    const loadInitialData = vi.fn(() => {
+      store.currentAnime = [createAnime(1)]
+      return Promise.resolve()
+    })
+    store.loadInitialData = loadInitialData
+
+    const html = await renderAnimePage(pinia)
+
+    expect(loadInitialData).toHaveBeenCalledOnce()
+    expect(html).toContain('Anime 1')
+    expect(html).not.toContain('Loading anime...')
+  })
+
+  it('server-renders a spinner while a failed prefetch awaits a client retry', async () => {
+    const pinia = createTestingPinia({ createSpy: vi.fn })
+    const store = useAnimeStore(pinia)
+    const loadInitialData = vi.fn(() => {
+      store.error = listError
+      return Promise.resolve()
+    })
+    store.loadInitialData = loadInitialData
+
+    const html = await renderAnimePage(pinia)
+
+    expect(loadInitialData).toHaveBeenCalledOnce()
+    expect(html).toContain('Loading anime...')
+    expect(html).not.toContain(listError)
+  })
+
+  it('shows the error after the client retry fails', async () => {
+    const pinia = createTestingPinia({ createSpy: vi.fn })
+    const store = useAnimeStore(pinia)
+    store.error = listError
+    const loadInitialData = vi.fn(async () => {
+      store.error = ''
+      store.loading = true
+      await nextTick()
+      store.loading = false
+      store.error = listError
+    })
+    store.loadInitialData = loadInitialData
+
+    const router = createAnimePageRouter()
+    await router.push('/anime')
+    const wrapper = mount(RouterView, {
+      global: { plugins: [pinia, router], stubs: { ...stubs, AnimeGrid: false } }
+    })
+
+    expect(wrapper.get('.loading').text()).toContain('Loading anime...')
+    await flushPromises()
+
+    expect(loadInitialData).toHaveBeenCalledOnce()
+    expect(wrapper.get('.error').text()).toContain(listError)
+    wrapper.unmount()
+  })
+})
+
 describe('Anime list detail navigation', () => {
   it('waits for a successful prefetch before navigating', async () => {
     const router = createTestRouter()
@@ -120,6 +198,8 @@ describe('Anime list detail navigation', () => {
     const animeStore = useAnimeStore(pinia)
     const loadAnime = vi.fn<typeof animeStore.loadAnime>().mockResolvedValue(undefined)
     animeStore.loadAnime = loadAnime
+    animeStore.currentAnime = [createAnime(1)]
+    animeStore.hasNextPage = true
     const searchFiltersStub = {
       props: ['searchQuery'],
       emits: ['update:searchQuery'],
