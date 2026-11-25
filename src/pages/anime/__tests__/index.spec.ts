@@ -3,6 +3,7 @@ import { mount } from '@vue/test-utils'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import AnimeIndex from '../index.vue'
+import AnimeGrid from '@/components/anime/AnimeGrid.vue'
 import { useAnimeStore } from '@/stores/anime'
 import { MediaType, type Media } from '@/utils/types/anilist'
 
@@ -50,6 +51,7 @@ const stubs = {
     template: '<div data-test="scroll-to-top"></div>'
   },
   AnimeGrid: {
+    props: { hasMoreToShow: Boolean },
     emits: ['animeClick'],
     template: '<button data-test="open-details" @click="$emit(\'animeClick\', 1)">Open</button>'
   }
@@ -140,16 +142,21 @@ describe('Anime list detail navigation', () => {
       }
     })
 
+    const grid = wrapper.getComponent(AnimeGrid)
+    expect(grid.props('hasMoreToShow')).toBe(true)
+
     await wrapper.get('[data-test="search-first"]').trigger('click')
     await wrapper.get('[data-test="search-last"]').trigger('click')
 
     expect(animeStore.searchQuery).toBe('Cowboy Bebop')
+    expect(grid.props('hasMoreToShow')).toBe(false)
     expect(loadAnime).not.toHaveBeenCalled()
 
     await vi.advanceTimersByTimeAsync(300)
 
     expect(loadAnime).toHaveBeenCalledOnce()
     expect(loadAnime).toHaveBeenCalledWith(true)
+    expect(grid.props('hasMoreToShow')).toBe(true)
     expect(scrollTo).toHaveBeenCalledOnce()
   })
 })

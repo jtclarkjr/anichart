@@ -3,6 +3,8 @@ import { getAnimeList, getAnimeDetails, getCurrentSeason } from '@/utils/api/ani
 import type { Media, AnimeListParams } from '@/utils/types/anilist'
 import { MediaSort, MediaSeason } from '@/utils/types/anilist'
 
+const activeListRequests = new WeakMap<object, symbol>()
+
 export interface AnimeState {
   // Current filtered/sorted data
   currentAnime: Media[]
@@ -126,43 +128,43 @@ export const useAnimeStore = defineStore('anime', {
     },
 
     // Load anime with current filters and sorting
-    async loadAnime(resetData: boolean = false) {
-      // Generate cache key at the start for use throughout the function
+    async loadAnime(resetData = false, { allowSeasonFallback = false } = {}) {
       const cacheKey = this.cacheKey
+      const request = Symbol()
+      activeListRequests.set(this, request)
 
-      // For load more, don't use cache - always fetch fresh data
-      if (!resetData) {
-        // This is load more - keep existing data visible
-        this.loadingMore = true
-        this.error = ''
-      } else {
-        // This is a new search/filter - check cache first
+      const ownsList = () => activeListRequests.get(this) === request
+      const isCurrentRequest = () => ownsList() && this.cacheKey === cacheKey
+
+      this.error = ''
+      if (resetData) {
         const cached = this.cache[cacheKey]
 
         if (cached) {
-          // Use cached data for filters/search
           this.currentAnime = cached.data
           this.hasNextPage = cached.hasMore
           this.currentPage = cached.page
+          this.loading = false
+          this.loadingMore = false
           return
         }
 
-        this.loading = true
-        this.error = ''
         this.currentPage = 1
-        // Don't clear currentAnime yet - wait for successful response
       }
 
-      // Store previous data to avoid "no anime found" flash
+      this.loading = resetData
+      this.loadingMore = !resetData
+
+      const params = this.getApiParams()
       const previousAnime = resetData ? [] : this.currentAnime
 
       try {
-        const result = await getAnimeList(this.getApiParams())
+        const result = await getAnimeList(params)
+        if (!isCurrentRequest()) return
 
-        if (!result.media || result.media.length === 0) {
-          // If no results and this is initial load, try fallback strategies
-          if (resetData && this.selectedSeason && this.currentAnime.length === 0) {
-            console.log(`No results for ${this.selectedSeason} season, trying fallbacks...`)
+        if (allowSeasonFallback && !params.search && !result.media?.length) {
+          if (resetData && params.season && this.currentAnime.length === 0) {
+            console.log(`No results for ${params.season} season, trying fallbacks...`)
 
             // Try previous seasons first
             const { season: currentSeason, year } = getCurrentSeason()
@@ -198,10 +200,11 @@ export const useAnimeStore = defineStore('anime', {
               }
 
               const fallbackResult = await getAnimeList({
-                ...this.getApiParams(),
+                ...params,
                 season: fallbackSeason,
                 seasonYear
               })
+              if (!isCurrentRequest()) return
 
               if (fallbackResult.media && fallbackResult.media.length > 0) {
                 console.log(`Found results in ${fallbackSeason} season`)
@@ -223,12 +226,11 @@ export const useAnimeStore = defineStore('anime', {
             }
 
             // If seasonal fallbacks don't work, try without season filter
-            const noSeasonParams = { ...this.getApiParams() }
+            const noSeasonParams = { ...params }
             delete noSeasonParams.season
             delete noSeasonParams.seasonYear
-            // Ensure adult filter is maintained
-            noSeasonParams.isAdult = false
             const noSeasonResult = await getAnimeList(noSeasonParams)
+            if (!isCurrentRequest()) return
 
             if (noSeasonResult.media && noSeasonResult.media.length > 0) {
               this.currentAnime = this.filterSafeAnime(noSeasonResult.media)
@@ -263,6 +265,8 @@ export const useAnimeStore = defineStore('anime', {
           hasMore: this.hasNextPage
         }
       } catch (error) {
+        if (!isCurrentRequest()) return
+
         this.error = 'Failed to load anime data. Please try again.'
         this.hasNextPage = false
         console.error('Error loading anime data:', error)
@@ -271,8 +275,10 @@ export const useAnimeStore = defineStore('anime', {
           this.currentAnime = []
         }
       } finally {
-        this.loading = false
-        this.loadingMore = false
+        if (ownsList()) {
+          this.loading = false
+          this.loadingMore = false
+        }
       }
     },
 
@@ -280,7 +286,7 @@ export const useAnimeStore = defineStore('anime', {
     async loadInitialData() {
       // Only load if we don't have any data yet
       if (this.currentAnime.length === 0 && !this.loading) {
-        await this.loadAnime(true)
+        await this.loadAnime(true, { allowSeasonFallback: true })
       }
     },
 
@@ -320,6 +326,7 @@ export const useAnimeStore = defineStore('anime', {
 
     // Reset state for navigation
     resetState() {
+      activeListRequests.delete(this)
       this.currentAnime = []
       this.loading = false
       this.loadingMore = false

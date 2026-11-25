@@ -2,12 +2,13 @@ import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { createPinia, setActivePinia } from 'pinia'
 import { useAnimeStore } from './anime'
 import { getAnimeDetails, getAnimeList } from '@/utils/api/anime.api'
-import { MediaType, type Media } from '@/utils/types/anilist'
+import { MediaSeason, MediaSort, MediaType, type Media, type Page } from '@/utils/types/anilist'
 
 vi.mock('@/utils/api/anime.api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/utils/api/anime.api')>()),
   getAnimeDetails: vi.fn(),
-  getAnimeList: vi.fn()
+  getAnimeList: vi.fn(),
+  getCurrentSeason: () => ({ season: MediaSeason.FALL, year: 2026 })
 }))
 
 const createAnime = (id: number): Media => ({
@@ -39,16 +40,27 @@ const createAnime = (id: number): Media => ({
   source: null
 })
 
+const createPage = (...media: Media[]): Page => ({
+  media,
+  pageInfo: {
+    total: media.length,
+    currentPage: 1,
+    lastPage: 1,
+    hasNextPage: false,
+    perPage: 50
+  }
+})
+
 const mockedGetAnimeDetails = vi.mocked(getAnimeDetails)
 const mockedGetAnimeList = vi.mocked(getAnimeList)
 
-describe('anime detail cache', () => {
-  beforeEach(() => {
-    setActivePinia(createPinia())
-    mockedGetAnimeDetails.mockReset()
-    mockedGetAnimeList.mockReset()
-  })
+beforeEach(() => {
+  setActivePinia(createPinia())
+  mockedGetAnimeDetails.mockReset()
+  mockedGetAnimeList.mockReset()
+})
 
+describe('anime detail cache', () => {
   it('returns an existing detail record without querying AniList', async () => {
     const anime = createAnime(1)
     const store = useAnimeStore()
@@ -97,5 +109,94 @@ describe('anime detail cache', () => {
     expect(mockedGetAnimeList).toHaveBeenCalledTimes(1)
     expect(store.currentPage).toBe(2)
     consoleError.mockRestore()
+  })
+})
+
+describe('anime list season filtering', () => {
+  it('keeps the season and year when an unmatched search is cleared and retyped', async () => {
+    const store = useAnimeStore()
+    const anime = createAnime(5)
+    store.selectedSeason = MediaSeason.WINTER
+    store.currentAnime = [anime]
+    mockedGetAnimeList.mockImplementation(({ search, season } = {}) =>
+      Promise.resolve(!season || search === 'second title' ? createPage(anime) : createPage())
+    )
+
+    await store.setSearchQuery('unmatched')
+    expect(store.currentAnime).toStrictEqual([])
+
+    await store.setSearchQuery('')
+    expect(store.currentAnime).toStrictEqual([])
+    expect(store.selectedSeason).toBe(MediaSeason.WINTER)
+
+    await store.setSearchQuery('second title')
+    expect(store.currentAnime).toStrictEqual([anime])
+    expect(store.selectedSeason).toBe(MediaSeason.WINTER)
+
+    const seasonalParams = {
+      page: 1,
+      perPage: 50,
+      sort: [MediaSort.POPULARITY_DESC],
+      isAdult: false,
+      season: MediaSeason.WINTER,
+      seasonYear: 2027
+    }
+    expect(mockedGetAnimeList.mock.calls).toStrictEqual([
+      [{ ...seasonalParams, search: 'unmatched' }],
+      [seasonalParams],
+      [{ ...seasonalParams, search: 'second title' }]
+    ])
+  })
+
+  it.each(['network', 'cache'])(
+    'keeps restored %s results when an older search finishes',
+    async (source) => {
+      const store = useAnimeStore()
+      const seasonalAnime = createAnime(6)
+      if (source === 'cache') {
+        mockedGetAnimeList.mockResolvedValueOnce(createPage(seasonalAnime))
+        await store.loadInitialData()
+        mockedGetAnimeList.mockClear()
+      }
+
+      let resolveSearch: ((page: Page) => void) | undefined
+      mockedGetAnimeList.mockReturnValueOnce(
+        new Promise<Page>((resolve) => {
+          resolveSearch = resolve
+        })
+      )
+      mockedGetAnimeList.mockResolvedValueOnce(createPage(seasonalAnime))
+
+      const pendingSearch = store.setSearchQuery('older title')
+      await store.setSearchQuery('')
+      expect(store.currentAnime).toStrictEqual([seasonalAnime])
+      expect(store.loading).toBe(false)
+      expect(mockedGetAnimeList).toHaveBeenCalledTimes(source === 'cache' ? 1 : 2)
+
+      resolveSearch?.(createPage(createAnime(7)))
+      await pendingSearch
+
+      expect(store.currentAnime).toStrictEqual([seasonalAnime])
+      expect(store.selectedSeason).toBe(MediaSeason.FALL)
+    }
+  )
+
+  it('can fall back to an unfiltered list during initial load', async () => {
+    const store = useAnimeStore()
+    const anime = createAnime(8)
+    mockedGetAnimeList.mockImplementation(({ season } = {}) =>
+      Promise.resolve(season ? createPage() : createPage(anime))
+    )
+
+    await store.loadInitialData()
+
+    expect(mockedGetAnimeList.mock.calls.map(([params]) => params?.season)).toStrictEqual([
+      MediaSeason.FALL,
+      MediaSeason.SUMMER,
+      MediaSeason.SPRING,
+      undefined
+    ])
+    expect(store.currentAnime).toStrictEqual([anime])
+    expect(store.selectedSeason).toBe('')
   })
 })

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onServerPrefetch } from 'vue'
+import { computed, onMounted, onServerPrefetch, ref } from 'vue'
 import SearchFilters from '@/components/search/SearchFilters.vue'
 import AnimeGrid from '@/components/anime/AnimeGrid.vue'
 import ScrollToTop from '@/components/utils/ScrollToTop.vue'
@@ -20,9 +20,13 @@ const goToDetails = async (id: number) => {
   await router.push(`/anime/${id}`)
 }
 
+// The displayed list still belongs to the previous query during the debounce.
+const searchPending = ref(false)
+
 // Keep the field responsive while batching API searches.
 const loadSearchResults = debounce(() => {
   void animeStore.loadAnime(true)
+  searchPending.value = false
   if (typeof window !== 'undefined') {
     window.scrollTo(0, 0)
   }
@@ -32,6 +36,7 @@ const searchQuery = computed({
   get: () => animeStore.searchQuery,
   set: (value: string) => {
     animeStore.searchQuery = value
+    searchPending.value = true
     loadSearchResults()
   }
 })
@@ -100,10 +105,10 @@ onBeforeRouteLeave(() => {
         :loadingMore="animeStore.loadingMore"
         :error="animeStore.error"
         :hasData="animeStore.currentAnime.length > 0"
-        :hasMoreToShow="animeStore.hasMoreToShow"
+        :hasMoreToShow="!searchPending && animeStore.hasMoreToShow"
         :totalCount="animeStore.currentCount"
         @animeClick="goToDetails"
-        @retry="animeStore.loadInitialData"
+        @retry="animeStore.loadAnime(true)"
         @loadMore="animeStore.loadMoreData"
       />
     </div>
